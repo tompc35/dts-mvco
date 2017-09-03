@@ -105,7 +105,7 @@ set(gcf, 'PaperSize', [7.0 7.0]);
 set(gcf, 'PaperPosition', [0 0 6.8 6.2])
 
 ax1 = subplot(15,2,[1:2:5])
-pcolor(datetime_events,distance/1000,squeeze(nanmean(tdts_events,3))')
+pcolor(datetime_events*24,distance/1000,squeeze(nanmean(tdts_events,3))')
 shading flat
 colormap(ax1,jet)
 colorbar
@@ -113,9 +113,9 @@ title('DTS temperature [^oC]')
 ylabel('distance, d [km]')
 
 subplot(15,2,[2:2:6])
-contour(datetime_events,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5])
+contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5])
 hold on
-contour(datetime_events,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
+contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
 title('E temperature [^oC]')
 cbar = colorbar;
 set(cbar,'visible','off')
@@ -124,44 +124,44 @@ ylim([0,15])
 
 
 subplot(15,2,[9:2:13])
-pcolorjw(ttime_events,H.zz,squeeze(nanmean(real(wh_detide_events(:,:,hidx)),3))')
+pcolorjw(ttime_events*24,H.zz,squeeze(nanmean(real(wh_events(:,:,hidx)),3))')
 %pcolorjw(ttime_events,H.zz,squeeze(nanmean(real(wh_events(:,:,hidx)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
 hold on
-contour(datetime_events,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
+contour(datetime_events*24,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
             [0:.1:100],'color',[0.5 0.5 0.5])
-contour(datetime_events,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
+contour(datetime_events*24,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
             [0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
 colorbar
 title('H - eastward velocity')
 ylim([0,15])
-caxis([-0.07,0.07])
+caxis([-0.15,0.15])
 ylabel('[mab]')
 
 subplot(15,2,[10:2:14])
-pcolorjw(ttime_events,H.zz,squeeze(nanmean(imag(wh_detide_events(:,:,hidx)),3))')
+pcolorjw(ttime_events*24,H.zz,squeeze(nanmean(imag(wh_events(:,:,hidx)),3))')
 %pcolorjw(ttime_events,H.zz,squeeze(nanmean(imag(wh_events(:,:,hidx)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
 colorbar
 hold on
-contour(datetime_events,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
+contour(datetime_events*24,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
             [0:.1:100],'color',[0.5 0.5 0.5])
-contour(datetime_events,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
+contour(datetime_events*24,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))', ...
             [0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
 title('H - northward velocity')
 ylim([0,15])
-caxis([-0.07,0.07])
+caxis([-0.05,0.05])
 ylabel('[mab]')
 
 %%% G velocity %%%
 
 zi = 1:15;
 subplot(15,2,[17:2:19])
-pcolorjw(mitime_events,G.M.z(zi),squeeze(nanmean(real(wg_detide_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,G.M.z(zi),squeeze(nanmean(real(wg_events(:,zi,:)),3))')
 %pcolorjw(mitime_events,G.M.z(zi),squeeze(nanmean(real(wg_events(:,zi,:)),3))')
 shading flat
 colormap(redblue)
@@ -170,16 +170,16 @@ colorbar
 title('G - eastward velocity')
 ylim([0,12])
 hold on
-contour(datetime_events,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
-[c,h] = contour(datetime_events,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
+contour(datetime_events*24,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
+[c,h] = contour(datetime_events*24,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
 hold off
-caxis([-0.07,0.07])
+caxis([-0.15,0.15])
 ylabel('[mab]')
 
 
 
 subplot(15,2,[18:2:20])
-pcolorjw(mitime_events,G.M.z(zi),squeeze(nanmean(imag(wg_detide_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,G.M.z(zi),squeeze(nanmean(imag(wg_events(:,zi,:)),3))')
 %pcolorjw(mitime_events,G.M.z(zi),squeeze(nanmean(imag(wg_events(:,zi,:)),3))')
 shading flat
 colormap(redblue)
@@ -188,34 +188,34 @@ colorbar
 title('G - northward velocity')
 ylim([0,12])
 hold on
-contour(datetime_events,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
-[c,h] = contour(datetime_events,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
+contour(datetime_events*24,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
+[c,h] = contour(datetime_events*24,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
 hold off
-caxis([-0.07,0.07])
+caxis([-0.05,0.05])
 ylabel('[mab]')
 
 
 zi = 1:15;
 subplot(15,2,[23:2:29])
-pcolorjw(mitime_events,I.M.z(zi),squeeze(nanmean(real(wi_detide_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,I.M.z(zi),squeeze(nanmean(real(wi_events(:,zi,:)),3))')
 %pcolorjw(mitime_events,I.M.z(zi),squeeze(nanmean(real(wi_events(:,zi,:)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
 colorbar
-caxis([-0.07,0.07])
+caxis([-0.15,0.15])
 ylim([0,22])
 hold on 
-contour(datetime_events,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
-contour(datetime_events,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2), shading flat
+contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
+contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2), shading flat
 hold off
 title('I - eastward velocity')
-xlabel('time relative to event start [d]')
+xlabel('time relative to event start [h]')
 ylabel('[mab]')
 
 
 subplot(15,2,[24:2:30])
-pcolorjw(mitime_events,I.M.z(zi),squeeze(nanmean(imag(wi_detide_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,I.M.z(zi),squeeze(nanmean(imag(wi_events(:,zi,:)),3))')
 %pcolorjw(mitime_events,I.M.z(zi),squeeze(nanmean(imag(wi_events(:,zi,:)),3))')
 shading flat
 colormap(redblue)
@@ -223,12 +223,12 @@ caxiscen;
 colorbar
 ylim([0,22])
 hold on 
-contour(datetime_events,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
-[c,h] = contour(datetime_events,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2), shading flat
+contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
+[c,h] = contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2), shading flat
 hold off
 title('I - northward velocity')
-caxis([-0.07,0.07])
-xlabel('time relative to event start [d]')
+caxis([-0.05,0.05])
+xlabel('time relative to event start [h]')
 ylabel('[mab]')
 
 print -dpng figures_paper/fig_h_event_composite_allsites.png
