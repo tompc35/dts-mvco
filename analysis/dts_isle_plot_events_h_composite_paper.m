@@ -269,4 +269,3 @@ ylabel('[mab]')
 set(gca,'xtick',[-6:3:6])
 
 print -dpng figures_paper/fig_h_event_composite_allsites.png
-

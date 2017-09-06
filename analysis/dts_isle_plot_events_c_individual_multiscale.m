@@ -56,159 +56,152 @@ for kk = 1:length(ti)
     if ~isnan(tempC(zic,di))
     
         for zii = 1:40
-            for zjj = 1:40
-                %zjj = zi;
-                %zii = 10;
-                % modify points
-                zicr = zic; %  corner
-                zi5 = zic-zii;
-                zie = zic+zjj;
+            zjj = zii;
+            %zii = 10;
+            % modify points
+            zicr = zic; %  corner
+            zi5 = zic-zii;
+            zie = zic+zjj;
 
-                latc = lat_dts(zicr);
-                lonc = lon_dts(zicr);
+            latc = lat_dts(zicr);
+            lonc = lon_dts(zicr);
 
-                late = lat_dts(zie);
-                lone = lon_dts(zie);
+            late = lat_dts(zie);
+            lone = lon_dts(zie);
 
-                % geometry of mooring array
-                xc = 0; yc = 0;
-                [x5,y5] = latlon2xy(lat5,lon5,latc,lonc);
-                [xe,ye] = latlon2xy(late,lone,latc,lonc);
+            % geometry of mooring array
+            xc = 0; yc = 0;
+            [x5,y5] = latlon2xy(lat5,lon5,latc,lonc);
+            [xe,ye] = latlon2xy(late,lone,latc,lonc);
 
-                % angle of deviation of c-e line from x (eastward) axis
-                theta = atan2(ye,xe)*180/pi;
+            % angle of deviation of c-e line from x (eastward) axis
+            theta = atan2(ye,xe)*180/pi;
 
-                % length of triangle segments
-                length_5c = sqrt((x5-xc)^2 + (y5-yc)^2);
-                length_ce = sqrt((xc-xe)^2 + (yc-ye)^2);
-                length_e5 = sqrt((xe-x5)^2 + (ye-y5)^2);
+            % length of triangle segments
+            length_5c = sqrt((x5-xc)^2 + (y5-yc)^2);
+            length_ce = sqrt((xc-xe)^2 + (yc-ye)^2);
+            length_e5 = sqrt((xe-x5)^2 + (ye-y5)^2);
 
-                % angles of triangle (law of cosines)
-                ang_5c = acos((-length_5c^2 + length_ce^2 + length_e5^2) ...
-                                /(2*length_ce*length_e5))*180/pi;
-                ang_ce = acos((-length_ce^2 + length_e5^2 + length_5c^2) ...
-                                /(2*length_e5*length_5c))*180/pi;      
-                ang_e5 = acos((-length_e5^2 + length_5c^2 + length_ce^2) ...
-                                /(2*length_5c*length_ce))*180/pi;  
+            % angles of triangle (law of cosines)
+            ang_5c = acos((-length_5c^2 + length_ce^2 + length_e5^2) ...
+                            /(2*length_ce*length_e5))*180/pi;
+            ang_ce = acos((-length_ce^2 + length_e5^2 + length_5c^2) ...
+                            /(2*length_e5*length_5c))*180/pi;      
+            ang_e5 = acos((-length_e5^2 + length_5c^2 + length_ce^2) ...
+                            /(2*length_5c*length_ce))*180/pi;  
 
-                tcrn = tempC(zicr,:);
-                tend = tempC(zie,:);
-                %t5 = tcal5';t5 
-                t5 = tempC(zi5,:);
+            tcrn = tempC(zicr,:);
+            tend = tempC(zie,:);
+            %t5 = tcal5';t5 
+            t5 = tempC(zi5,:);
 
-                tcrn = boxfilt(tcrn,nfilt);
-                tend = boxfilt(tend,nfilt);
-                t5 = boxfilt(t5,nfilt);
+            tcrn = boxfilt(tcrn,nfilt);
+            tend = boxfilt(tend,nfilt);
+            t5 = boxfilt(t5,nfilt);
 
-                dt = (datetime(2)-datetime(1))*86400;
+            dt = (datetime(2)-datetime(1))*86400;
 
-                dTdtcrn = nan(size(tcrn));
-                dTdtcrn(2:end-1) = 0.5*(tcrn(3:end)-tcrn(1:end-2))/dt;
+            dTdtcrn = nan(size(tcrn));
+            dTdtcrn(2:end-1) = 0.5*(tcrn(3:end)-tcrn(1:end-2))/dt;
 
-                dTdtend = nan(size(tend));
-                dTdtend(2:end-1) = 0.5*(tend(3:end)-tend(1:end-2))/dt;
+            dTdtend = nan(size(tend));
+            dTdtend(2:end-1) = 0.5*(tend(3:end)-tend(1:end-2))/dt;
 
-                dTdt5 = nan(size(t5));
-                dTdt5(2:end-1) = 0.5*(t5(3:end)-t5(1:end-2))/dt;
-
-
-                [~,i5] = min(dTdt5(di));
-                [~,ic] = min(dTdtcrn(di));
-                [~,ie] = min(dTdtend(di));
-
-                tstart = datetime(di(min([i5 ic ie])));
-                tf = datetime(di(max([i5 ic ie])));
-
-                cp_5c = 1000*length_5c/((i5-ic)*dt);
-                cp_ce = -1000*length_ce/((ic-ie)*dt);
-                cp_e5 = 1000*length_e5/((ie-i5)*dt);    
-
-                phi = atan((cp_ce/cp_5c)*cscd(ang_e5) - cotd(ang_e5));
-                phi2 = atan(cotd(ang_5c) - (cp_ce/cp_e5)*cscd(ang_5c));
-
-                %disp(datestr(datetime(di(1))))
-                %disp(['phi_1 = ' num2str(phi*180/pi)])
-                %disp(['phi_2 = ' num2str(phi2*180/pi)])
-
-                % magnitude of phase velocity
-                cp1 = cp_ce*cos(phi);
-                cp2 = cp_5c*cos(ang_e5*pi/180 - phi);
-                cp3 = cp_e5*cos(phi+ang_5c*pi/180);
-
-                if isfinite(cp1)
-                    cp = cp1;
-                elseif isfinite(cp2)
-                    cp = cp2;
-                elseif isfinite(cp3)
-                    cp = cp3;
-                else 
-                    cp = NaN;
-                end
-
-                if cp < 0
-                   cp = -cp;
-                   phi = phi - pi;
-                end
+            dTdt5 = nan(size(t5));
+            dTdt5(2:end-1) = 0.5*(t5(3:end)-t5(1:end-2))/dt;
 
 
+            [~,i5] = min(dTdt5(di));
+            [~,ic] = min(dTdtcrn(di));
+            [~,ie] = min(dTdtend(di));
 
-                % angle of propagation relative to x-axis
-                phixy = theta*pi/180-phi; 
+            tstart = datetime(di(min([i5 ic ie])));
+            tf = datetime(di(max([i5 ic ie])));
 
+            cp_5c = 1000*length_5c/((i5-ic)*dt);
+            cp_ce = -1000*length_ce/((ic-ie)*dt);
+            cp_e5 = 1000*length_e5/((ie-i5)*dt);    
 
+            phi = atan((cp_ce/cp_5c)*cscd(ang_e5) - cotd(ang_e5));
+            phi2 = atan(cotd(ang_5c) - (cp_ce/cp_e5)*cscd(ang_5c));
 
-                % mean tidal velocity in direction of phase propagation
-                 cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
+            %disp(datestr(datetime(di(1))))
+            %disp(['phi_1 = ' num2str(phi*180/pi)])
+            %disp(['phi_2 = ' num2str(phi2*180/pi)])
 
-                zoff = 0.75; % difference between bottom and ADCP height
+            % magnitude of phase velocity
+            cp1 = cp_ce*cos(phi);
+            cp2 = cp_5c*cos(ang_e5*pi/180 - phi);
+            cp3 = cp_e5*cos(phi+ang_5c*pi/180);
 
-                %uhm_tide = mean(depthavg(C.utide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-                %vhm_tide = mean(depthavg(C.vtide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-
-                uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-                vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-                
-                whm_tide = uhm_tide+i*vhm_tide;
-
-                whmc_tide = whm_tide*exp(-i*phixy);
-                uhmc_tide = real(whmc_tide);   
-
-                wc = C.M.evm + i*C.M.nvm;
-                wcc = wc*exp(-i*phixy);
-
-
-                wcdt = C.M.evm + i*C.M.nvm - C.utide - i*C.vtide;
-                wccdt = wcdt*exp(-i*phixy);
-
-                % remove background current
-                cpa = cp-mean(uhmc_tide);
-                
-                dx_d(zii,zjj) = (distance(end)-distance(end-1))*(zii);
-                dy_d(zii,zjj) = (distance(end)-distance(end-1))*(zjj);
-                
-                ur_d(zii,zjj) = mean(uhmc_tide);
-                u_d(zii,zjj) = mean(real(whm_tide));
-                v_d(zii,zjj) = mean(imag(whm_tide));
-                
-                cp_d(zii,zjj) = cp;
-                cpa_d(zii,zjj) = cpa;
-                phixy_d(zii,zjj) = phixy;
-                
-                cpx_d(zii,zjj) = cp*cos(phixy);
-                cpy_d(zii,zjj) = cp*sin(phixy);
-        
-                cpax_d(zii,zjj) = cpa*cos(phixy);
-                cpay_d(zii,zjj) = cpa*sin(phixy);
-
+            if isfinite(cp1)
+                cp = cp1;
+            elseif isfinite(cp2)
+                cp = cp2;
+            elseif isfinite(cp3)
+                cp = cp3;
+            else 
+                cp = NaN;
             end
+
+            if cp < 0
+               cp = -cp;
+               phi = phi - pi;
+            end
+
+            % angle of propagation relative to x-axis
+            phixy = theta*pi/180-phi; 
+
+            % mean tidal velocity in direction of phase propagation
+             cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
+
+            zoff = 0.75; % difference between bottom and ADCP height
+
+            %uhm_tide = mean(depthavg(C.utide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
+            %vhm_tide = mean(depthavg(C.vtide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
+
+            uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
+            vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
+
+            whm_tide = uhm_tide+i*vhm_tide;
+
+            whmc_tide = whm_tide*exp(-i*phixy);
+            uhmc_tide = real(whmc_tide);   
+
+            wc = C.M.evm + i*C.M.nvm;
+            wcc = wc*exp(-i*phixy);
+
+
+            wcdt = C.M.evm + i*C.M.nvm - C.utide - i*C.vtide;
+            wccdt = wcdt*exp(-i*phixy);
+
+            % remove background current
+            cpa = cp-mean(uhmc_tide);
+
+            dx_d(zii) = (distance(end)-distance(end-1))*(zii);
+            dy_d(zii) = (distance(end)-distance(end-1))*(zjj);
+
+            ur_d(zii) = mean(uhmc_tide);
+            u_d(zii) = mean(real(whm_tide));
+            v_d(zii) = mean(imag(whm_tide));
+
+            cp_d(zii) = cp;
+            cpa_d(zii) = cpa;
+            phixy_d(zii) = phixy;
+
+            cpx_d(zii) = cp*cos(phixy);
+            cpy_d(zii) = cp*sin(phixy);
+
+            cpax_d(zii) = cpa*cos(phixy);
+            cpay_d(zii) = cpa*sin(phixy);
         end
         
-        n = 15;
-        cpx_dv = vecshape(cpx_d(1:n,1:n));
-        cpy_dv = vecshape(cpy_d(1:n,1:n));
+        n = 20;
+        cpx_dv = vecshape(cpx_d(1:n));
+        cpy_dv = vecshape(cpy_d(1:n));
         
-        cpax_dv = vecshape(cpax_d(1:n,1:n));
-        cpay_dv = vecshape(cpay_d(1:n,1:n));
+        cpax_dv = vecshape(cpax_d(1:n));
+        cpay_dv = vecshape(cpay_d(1:n));
         
         fi = find(isfinite(cpx_dv+cpy_dv));
         cpx_dv = cpx_dv(fi);
@@ -243,39 +236,39 @@ for kk = 1:length(ti)
         cpax_std(ii) = std(cpax_dvg);
         cpay_std(ii) = std(cpay_dvg);        
         
-        if plot_event
+        if ii==1
             
-            figure
+            figure(1)
             set(gcf, 'PaperSize', [7.0 7]);
             set(gcf, 'PaperPosition', [0 0 7 7])   
 
             subplot(221)
-            h1 = plot(dx_d,cpax_d,'.','color',[.7 .7 .7]);
+            h1 = plot(dx_d,cpax_d,'-','color',[.7 .7 .7],'linewidth',2);
             hold on
-            h2 = plot(dx_d,cpay_d,'k.');
+            h2 = plot(dx_d,cpay_d,'k-','linewidth',2);
             xlabel('\Deltad in onshore direction [m]')
             ylabel(['[m/s]'])
             leg = legend([h1(1);h2(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
 
-            subplot(222)
-            plot(dy_d,cpay_d,'k.')
-            hold on
-            plot(dy_d,cpax_d,'.','color',[.7 .7 .7])
-            xlabel('\Deltad in east direction [m]')
-            ylabel('[m/s]')
+%             subplot(222)
+%             plot(dy_d,cpay_d,'k.')
+%             hold on
+%             plot(dy_d,cpax_d,'.','color',[.7 .7 .7])
+%             xlabel('\Deltad in east direction [m]')
+%             ylabel('[m/s]')
+% 
+%             subplot(2,2,[3:4])
+%             h = histogram(cpay_dv,40,'normalization','count');
+%             hold on
+%             hh = histogram(cpax_dv,40,'normalization','count');
+%             h.FaceColor = [0 0 0];
+%             hh.FaceColor = [1 1 1];
+%             title('histogram for \Deltad \leq 75m')
+%             legh = legend([hh(1);h(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
+%             ylabel('count')
+%             xlabel('[m/s]')
 
-            subplot(2,2,[3:4])
-            h = histogram(cpay_dv,40,'normalization','count');
-            hold on
-            hh = histogram(cpax_dv,40,'normalization','count');
-            h.FaceColor = [0 0 0];
-            hh.FaceColor = [1 1 1];
-            title('histogram for \Deltad \leq 75m')
-            legh = legend([hh(1);h(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
-            ylabel('count')
-            xlabel('[m/s]')
-
-            suptitle({datestr(event_daten(jj)),'phase speed components, variable cable spacing \Deltad'})
+            title(datestr(event_daten(jj)))
 
 
             %print('-dpdf',['figures_paper/fig_event_cp_stats_' datestr(datetime(di(1)),'YYYYMMDD')])
@@ -465,7 +458,19 @@ title('de-tided northward velocity [m/s]')
 
 print('-cmyk','-dpng',['figures_paper/fig_temp_velocity_composite'])
 
-
+%%
+figure(1)
+subplot(2,2,[2,4])
+set(gcf, 'PaperSize', [7.0 6.0]);
+set(gcf, 'PaperPosition', [0 0 7.0 6.0])
+h = errorbarxy(cpax,cpay,cpax_std,cpay_std,{'ko', 'k', 'k'});
+axis equal
+hz = zeroline('xy');
+set(h.hMain,'MarkerFaceColor','r')
+xlabel('c^\prime_{p}^x [m/s]')
+ylabel('c^\prime_{p}^y [m/s]')
+title('phase velocity relative to mean flow')
+print('-dpdf','figures_paper/fig_cp_scatter')
 
 %%
 figure
@@ -491,14 +496,20 @@ ylim([0 15])
 colorbar
 colormap(redblue)
 
+%Standard error
+wbotse = std(real(squeeze(wcdt_events(:,1,:)))')./sum(isfinite(imag(squeeze(wcdt_events(:,1,:)))'));
+
+tsgc_anom = squeeze(tsgc_events(:,1,:)) - repmat(nanmean(squeeze(tsgc_events(:,1,:))),[length(datetime_events),1])
+
+tsgc_anom_se = std(tsgc_anom)./sum(isfinite(tsgc_anom))
+
 %%
 figure
 subplot(211)
-plot(mitime_events,real(squeeze(wcdt_events(:,18,:)))'), shading flat
-
+plot(mitime_events,real(squeeze(wcdt_events(:,1,:)))'), shading flat
 
 subplot(212)
-plot(mitime_events,imag(squeeze(wcdt_events(:,18,:)))'), shading flat
+plot(mitime_events,imag(squeeze(wcdt_events(:,1,:)))'), shading flat
 
 % figure
 % compass(cpx,cpy,'r')
@@ -508,18 +519,6 @@ plot(mitime_events,imag(squeeze(wcdt_events(:,18,:)))'), shading flat
 % figure
 % compass(cpax,cpay,'b')
 
-%%
-figure
-set(gcf, 'PaperSize', [7.0 6.0]);
-set(gcf, 'PaperPosition', [0 0 7.0 6.0])
-h = errorbarxy(cpax,cpay,cpax_std,cpay_std,{'ko', 'k', 'k'});
-axis equal
-hz = zeroline('xy');
-set(h.hMain,'MarkerFaceColor','r')
-xlabel('c^\prime_{p}^x [m/s]')
-ylabel('c^\prime_{p}^y [m/s]')
-title('phase velocity relative to mean flow')
-print('-dpdf','figures_paper/fig_cp_scatter')
 
 %%
 t0i = find(mitime_events==0);
@@ -564,13 +563,13 @@ S = -rhodiff./deltarhoc';
 cpmag = sqrt(cpx.^2+cpy.^2);
 cpamag = sqrt(cpax.^2+cpay.^2);
 
-figure
-scatter(cpamag,imag(wb_events),30,deltarhoc,'filled');
-
-figure
-plot(cpamag,dTdzc,'.');
-
-figure
-scatter(cpamag,c0,30,log(S),'filled');
-gi = isfinite(cpamag+rhodiffh);
-[r,p] = corrcoef(cpamag(gi),sqrt(c0(gi)));
+% figure
+% scatter(cpamag,imag(wb_events),30,deltarhoc,'filled');
+% 
+% figure
+% plot(cpamag,dTdzc,'.');
+% 
+% figure
+% scatter(cpamag,c0,30,log(S),'filled');
+% gi = isfinite(cpamag+rhodiffh);
+% [r,p] = corrcoef(cpamag(gi),sqrt(c0(gi)));
