@@ -1,6 +1,6 @@
 clear all
 
-plot_event = 0;
+plot_event = 1;
 
 load_dts_isle_data
 detide_c;
@@ -71,7 +71,7 @@ for kk = 1:length(ti)
 
             % geometry of mooring array
             xc = 0; yc = 0;
-            [x5,y5] = latlon2xy(lat5,lon5,latc,lonc);
+            [x5,y5] = latlon2xy(lat_dts(zi5),lon_dts(zi5),latc,lonc);
             [xe,ye] = latlon2xy(late,lone,latc,lonc);
 
             % angle of deviation of c-e line from x (eastward) axis
@@ -196,12 +196,15 @@ for kk = 1:length(ti)
             cpay_d(zii) = cpa*sin(phixy);
         end
         
-        n = 20;
-        cpx_dv = vecshape(cpx_d(1:n));
-        cpy_dv = vecshape(cpy_d(1:n));
+        %n = 20;
         
-        cpax_dv = vecshape(cpax_d(1:n));
-        cpay_dv = vecshape(cpay_d(1:n));
+        m = 1;
+        n = 40;
+        cpx_dv = vecshape(cpx_d(m:n));
+        cpy_dv = vecshape(cpy_d(m:n));
+        
+        cpax_dv = vecshape(cpax_d(m:n));
+        cpay_dv = vecshape(cpay_d(m:n));
         
         fi = find(isfinite(cpx_dv+cpy_dv));
         cpx_dv = cpx_dv(fi);
@@ -219,11 +222,13 @@ for kk = 1:length(ti)
                   abs(zscore_mod(cpy_dv)) <= 3.5);
         cpx_dvg = cpx_dv(gi);
         cpy_dvg = cpy_dv(gi);
+        dx_dvg = dx_d(gi);
         
         gi = find(abs(zscore_mod(cpax_dv)) <= 3.5 & ...
                   abs(zscore_mod(cpay_dv)) <= 3.5);
         cpax_dvg = cpax_dv(gi);
         cpay_dvg = cpay_dv(gi);
+        dxa_dvg = dx_d(gi);
         
         % mean and standard deviation of phase speed estimates        
         cpx(ii) = mean(cpx_dvg);
@@ -236,16 +241,16 @@ for kk = 1:length(ti)
         cpax_std(ii) = std(cpax_dvg);
         cpay_std(ii) = std(cpay_dvg);        
         
-        if ii==1
+        if ii==15
             
             figure(1)
             set(gcf, 'PaperSize', [7.0 7]);
             set(gcf, 'PaperPosition', [0 0 7 7])   
 
             subplot(221)
-            h1 = plot(dx_d,cpax_d,'-','color',[.7 .7 .7],'linewidth',2);
+            h1 = plot(dxa_dvg,cpax_dvg,'-','color',[.7 .7 .7],'linewidth',2);
             hold on
-            h2 = plot(dx_d,cpay_d,'k-','linewidth',2);
+            h2 = plot(dxa_dvg,cpay_dvg,'k-','linewidth',2);
             xlabel('\Deltad in onshore direction [m]')
             ylabel(['[m/s]'])
             leg = legend([h1(1);h2(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
@@ -287,7 +292,8 @@ for kk = 1:length(ti)
         cpa_event(ii) = cpa;
         cp_event(ii) = cp;    
         %phixy_event(ii) = phixy;
-
+    
+        daten_events(ii) = event_daten(jj);
         t3_events(:,ii) = tcal3(di);
         t5_events(:,ii) = t5(di);
         tcrn_events(:,ii) = tcrn(di);
@@ -401,6 +407,11 @@ for kk = 1:length(ti)
 
             %print('-cmyk','-dpng',['figures_paper/fig_temp_velocity_' datestr(datetime(di(1)),'YYYYMMDD')])
             %print('-dpng',['figures/h_events_agu/h_event_propagation_profile_' datestr(datetime(di(1)),'mmdd_HHMM')])
+        
+%             figure
+%             quiver(cpax(ii),cpay(ii))
+%             hold on
+%             quiver(cpx(ii),cpy(ii))
         end
         %%
         ii = ii+1;
@@ -473,6 +484,20 @@ title('phase velocity relative to mean flow')
 print('-dpdf','figures_paper/fig_cp_scatter')
 
 %%
+
+figure
+set(gcf, 'PaperSize', [7.0 6.0]);
+set(gcf, 'PaperPosition', [0 0 7.0 6.0])
+h = errorbarxy(cpx,cpy,cpx_std,cpy_std,{'ko', 'k', 'k'});
+axis equal
+hz = zeroline('xy');
+set(h.hMain,'MarkerFaceColor','r')
+xlabel('c_{p}^x [m/s]')
+ylabel('c_{p}^y [m/s]')
+title('phase velocity')
+%print('-dpdf','figures_paper/fig_cp_scatter')
+
+%%
 figure
 subplot(211)
 pcolor(mitime_events,C.M.z+0.75,real(squeeze(mean(wcdt_events,3)))'), shading flat
@@ -526,7 +551,7 @@ dt0i = find(datetime_events==0);
 zsi = 18; % surface adcp bin
 
 % bottom velocity at front arrival
-wb_events = squeeze(wcdt_events(t0i+6,1,:));
+wb_events = squeeze(wcdt_events(t0i,1,:));
 
 % 
 g = 9.8;
@@ -536,40 +561,44 @@ rho0 = 1025;
 
 % stratification estimate
 Tc_events = [tc_events tsgc_events];
-lagi = -12; % -12 is a 1 hour lead
+lagi = -24; % -12 is a 1 hour lead
 %zti = length(zt_all);
 zti = 3;
 deltaTc = squeeze(Tc_events(dt0i-lagi,end,:)-Tc_events(dt0i-lagi,1,:));
 deltazc = zt_all(1)-zt_all(end);
 dTdzc = deltaTc./deltazc;
 deltarhoc = deltaTc*rho0*alpha;
+drhodzc = deltaTc*rho0*alpha./deltazc;
 
 %temporal temperature difference
-T1 = tsgc_events(dt0i+12,:);
-T2 = tsgc_events(dt0i-12,:);
+T1 = tsgc_events(dt0i+6,:);
+T2 = tsgc_events(dt0i-6,:);
 Tdiff = T2-T1;
 rhodiff = alpha*rho0*Tdiff;
 
 %horizontal temperature difference
-tdts2 = tsgc_events(dt0i-6,:);
+tdts2 = tsgc_events(dt0i,:);
 %tdts1 = squeeze(tdts_events(dt0i,zie-10,:))';
-tdts1 = t5_events(dt0i-6,:);
+tdts1 = t5_events(dt0i,:);
 Tdiffh = tdts2-tdts1;
 rhodiffh = alpha*rho0*Tdiffh;
 
 c0 = sqrt(abs(g*rhodiffh/rho0));
-S = -rhodiff./deltarhoc';
+S = -rhodiff./deltarhoc';!
 
 cpmag = sqrt(cpx.^2+cpy.^2);
 cpamag = sqrt(cpax.^2+cpay.^2);
 
-% figure
-% scatter(cpamag,imag(wb_events),30,deltarhoc,'filled');
-% 
-% figure
-% plot(cpamag,dTdzc,'.');
-% 
-% figure
-% scatter(cpamag,c0,30,log(S),'filled');
-% gi = isfinite(cpamag+rhodiffh);
-% [r,p] = corrcoef(cpamag(gi),sqrt(c0(gi)));
+figure
+scatter(cpmag,imag(wb_events),30,deltarhoc,'filled');
+
+figure
+plot(cpmag,drhodzc,'.');
+
+figure
+scatter(cpmag,c0,30,log(S),'filled');
+gi = isfinite(cpmag+rhodiffh);
+[r,p] = corrcoef(cpmag(gi),sqrt(c0(gi)));
+
+figure
+plot(cpamag,sqrt(drhodzc*9.8/1025)*15,'.');
