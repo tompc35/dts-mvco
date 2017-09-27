@@ -241,7 +241,7 @@ for kk = 1:length(ti)
         cpax_std(ii) = std(cpax_dvg);
         cpay_std(ii) = std(cpay_dvg);        
         
-        if ii==15
+        if ii==1
             
             figure(1)
             set(gcf, 'PaperSize', [7.0 7]);
@@ -274,6 +274,7 @@ for kk = 1:length(ti)
 %             xlabel('[m/s]')
 
             title(datestr(event_daten(jj)))
+            hold off
 
 
             %print('-dpdf',['figures_paper/fig_event_cp_stats_' datestr(datetime(di(1)),'YYYYMMDD')])
@@ -405,7 +406,7 @@ for kk = 1:length(ti)
             datetick('x','keeplimits')
             set(gca,'layer','top')
 
-            %print('-cmyk','-dpng',['figures_paper/fig_temp_velocity_' datestr(datetime(di(1)),'YYYYMMDD')])
+            print('-cmyk','-dpng',['figures_paper/events/fig_temp_velocity_' datestr(datetime(di(1)),'yyyymmdd')])
             %print('-dpng',['figures/h_events_agu/h_event_propagation_profile_' datestr(datetime(di(1)),'mmdd_HHMM')])
         
 %             figure
@@ -471,7 +472,7 @@ print('-cmyk','-dpng',['figures_paper/fig_temp_velocity_composite'])
 
 %%
 figure(1)
-subplot(2,2,[2,4])
+subplot(2,2,3)
 set(gcf, 'PaperSize', [7.0 6.0]);
 set(gcf, 'PaperPosition', [0 0 7.0 6.0])
 h = errorbarxy(cpax,cpay,cpax_std,cpay_std,{'ko', 'k', 'k'});
@@ -481,21 +482,18 @@ set(h.hMain,'MarkerFaceColor','r')
 xlabel('c^\prime_{p}^x [m/s]')
 ylabel('c^\prime_{p}^y [m/s]')
 title('phase velocity relative to mean flow')
-print('-dpdf','figures_paper/fig_cp_scatter')
+%print('-dpdf','figures_paper/fig_cp_scatter')
 
-%%
 
-figure
-set(gcf, 'PaperSize', [7.0 6.0]);
-set(gcf, 'PaperPosition', [0 0 7.0 6.0])
+subplot(221)
 h = errorbarxy(cpx,cpy,cpx_std,cpy_std,{'ko', 'k', 'k'});
 axis equal
 hz = zeroline('xy');
 set(h.hMain,'MarkerFaceColor','r')
 xlabel('c_{p}^x [m/s]')
 ylabel('c_{p}^y [m/s]')
-title('phase velocity')
-%print('-dpdf','figures_paper/fig_cp_scatter')
+title('absolute phase velocity')
+print('-dpdf','figures_paper/fig_cp_scatter')
 
 %%
 figure
