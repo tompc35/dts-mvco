@@ -9,16 +9,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear all
+load_data_paths;
 
 warning off
-position_file = '/Users/tomconnolly/Documents/MATLAB/work/ISLE/ISLE_asdeployed.mat';
+position_file = '../data/ISLE_asdeployed.mat';
 load(position_file);
 warning on
 
 config_name = 'asit';
-data_dir = '/Users/tomconnolly/work/Data/';
-dts_dir = [data_dir 'DTS_nc/'];
-dts_nc = [dts_dir '/proc/cal_6/DTSasit_proc.nc'];
 cal_nc = [dts_dir 'DTS' config_name '_cal.nc'];
 lon_dts = ncread(dts_nc,'lon');
 lat_dts = ncread(dts_nc,'lat');
@@ -55,7 +53,6 @@ tdata(tni) = NaN;
 %%
 
 figure(1); clf
-
 landcolor=[245 222 179]./255;
 
 subplot(2,1,1)
@@ -68,7 +65,6 @@ m_plot(c.lon_cst,c.lat_cst,'-','color','k','linewidth',1)
 
 m_grid('tickdir','out');
 hold on
-%m_plot(ISLE_locs(:,1),ISLE_locs(:,2),'ks','markerfacecolor','k','markersize',8)
 
 %form color map that goes from white to off-blue
 n=12;
@@ -84,30 +80,29 @@ caxis([-75 0])
 m_plot([mvco_area(1), mvco_area(2), mvco_area(2), mvco_area(1), mvco_area(1)],....
        [mvco_area(3), mvco_area(3), mvco_area(4), mvco_area(4), mvco_area(3)],...
         '-','color','r','linewidth',0.5)
-%m_text(shelf_area(1)+10/60,shelf_area(4)-10/60,'a','fontsize',12)    
+m_text(shelf_area(1)+10/60,shelf_area(4)-10/60,'a','fontsize',12)    
+m_plot(-74.0060,40.7128,'ko','markerfacecolor','k','markersize',4)
+m_text(-74.0060,40.7128,{'New','York'},'color','k',...
+        'horizontalalignment','right',...
+        'verticalalignment','bottom','fontsize',8)
+m_plot(-71.0589,42.3601,'ko','markerfacecolor','k','markersize',4)
+m_text(-71.0589,42.3601,{'Boston '},'color','k',...
+        'horizontalalignment','right','fontsize',8)
+
     
 subplot(2,1,2)
-
 m_proj('Mercator','lon',mvco_area(1:2),'lat',mvco_area(3:4));
-
 m_plot(z(:,1),z(:,2),'k','linewidth',1.5)
-
 m_grid('tickdir','out');
-
 hold on
-
 m_plot(ISLE_locs(:,1),ISLE_locs(:,2),'ks','markerfacecolor','k','markersize',5)
 for ii=1:length(ISLE_loc_labels)
     m_text(ISLE_locs(ii,1)-0.7/60,ISLE_locs(ii,2)-0.2/60,ISLE_loc_labels(ii),'fontsize',8)
 end
-
-
-
 m_plot(BS_locs(:,1),BS_locs(:,2),'ks','markerfacecolor','k','markersize',5)
 
 ii=1;    m_text(BS_locs(ii,1)-0.6/60,BS_locs(ii,2)-0.2/60,'E','fontsize',8)
 ii=2;    m_text(BS_locs(ii,1)-0.6/60,BS_locs(ii,2),'I','fontsize',8)
-
 
 %form color map that goes from white to off-blue
 n=12;
@@ -119,7 +114,7 @@ end
 colormap(bb2)
 m_contourf(lonb,latb,bathb,[-50 -45 -40 -35 -30 -25 -20 -15 -10 -5],'color','none');
 m_contour(lonb,latb,bathb,[-80 -40 -20],'color',[.6 .6 .6]);
-%m_text(mvco_area(1)+0.6/60,mvco_area(4)-0.6/60,'b','fontsize',12)    
+m_text(mvco_area(1)+0.6/60,mvco_area(4)-0.6/60,'b','fontsize',12)    
 caxis([-75 0])
 
 m_plot(lon3,lat3,'b.','markersize',16)
@@ -133,11 +128,12 @@ m_text(lon5-0.1/60,lat5-0.4/60,'R5','color','b','fontsize',8)
 m_text(lon6+0.2/60,lat6+0.2/60,'R6','color','b','fontsize',8)
 
 m_plot(lon_dts,lat_dts,'r-','linewidth',2)
+m_text(-70.4750,41.2917,{'Wasque','Shoals'},'color','k','fontsize',8,...
+                'horizontalalignment','center')
 
 %%
 
 set(gcf,'renderer','zbuffer')
 set(gcf, 'PaperSize', [4.5 5]); %Keep the paper size [width height] 
 set(gcf, 'PaperPosition', [0 0.1 4.5 5]); %
-print('-dpdf',['fig_map/fig_ISLE_DTS_map.pdf'])
-%print('-dpng','-r1200',['fig_map/fig_ISLE_DTS_map.png'])
+print('-dpdf',['figures_paper/fig_ISLE_DTS_map.pdf'])
