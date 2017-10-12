@@ -17,8 +17,8 @@ E.M.nvm(find(E.M.nvm == 999)) = NaN;
 nfilt = 3;
 [eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-0.5);
 %[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-1.0);
-detide_g;
-detide_i;
+%detide_g;
+%detide_i;
 
 %%
 
@@ -65,11 +65,11 @@ for ii = 1:length(ti)
         tnode_events = nan([length(di) length(ti)]);
         tdts_events = nan([length(di) size(tempC,1) length(ti)]);
         wh_events = nan([length(hi) length(H.zz) length(ti)])+i*nan([length(hi) length(H.zz) length(ti)]);
-        wh_detide_events = nan([length(hi) length(H.zz) length(ti)])+i*nan([length(hi) length(H.zz) length(ti)]);
+        %wh_detide_events = nan([length(hi) length(H.zz) length(ti)])+i*nan([length(hi) length(H.zz) length(ti)]);
         wi_events = nan([length(Ii) length(I.M.z) length(ti)]);
-        wi_detide_events = nan([length(Ii) length(I.M.z) length(ti)]);   
+        %wi_detide_events = nan([length(Ii) length(I.M.z) length(ti)]);   
         wg_events = nan([length(Ii) length(G.M.z) length(ti)]);
-        wg_detide_events = nan([length(Ii) length(G.M.z) length(ti)]);
+        %wg_detide_events = nan([length(Ii) length(G.M.z) length(ti)]);
         we_events = nan([length(Ii) length(E.M.z) length(ti)]);
         datetime_events = datetime(di)-event_daten(jj);
         mday_isle_events = mday_isle(tim)-event_daten(jj);
@@ -86,14 +86,14 @@ for ii = 1:length(ti)
     tG_events(:,:,ii) = tG(di,:);
     tdts_events(:,:,ii) = tempC(:,di)';
     wh_events(:,:,ii) = H.uu(:,hi)' + i*H.vv(:,hi)';
-    wh_detide_events(:,:,ii) = (H.uu(:,hi)-H.utide(:,hi))' +...
-                                i*(H.vv(:,hi)-H.vtide(:,hi))';
+    %wh_detide_events(:,:,ii) = (H.uu(:,hi)-H.utide(:,hi))' +...
+    %                            i*(H.vv(:,hi)-H.vtide(:,hi))';
     wi_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)'; 
-    wi_detide_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)' - ...
-                                (I.utide(:,Ii)+i*I.vtide(:,Ii))';
+    %wi_detide_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)' - ...
+    %                            (I.utide(:,Ii)+i*I.vtide(:,Ii))';
     wg_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)'; 
-    wg_detide_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)' - ...
-                                (G.utide(:,Ii)+i*G.vtide(:,Ii))'; 
+    %wg_detide_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)' - ...
+    %                            (G.utide(:,Ii)+i*G.vtide(:,Ii))'; 
     we_events(:,:,ii) = E.M.evm(:,Ii)' + i*E.M.nvm(:,Ii)'; 
 end
 
@@ -102,28 +102,18 @@ tnode_events_anom = tnode_events-repmat(tnode_events(round(length(di)/2),:),[len
 
 %%
 % find events where velocity data exists at H
-hidx = find(isfinite(squeeze(sum(wh_detide_events(15,:,:),2))));
+hidx = find(isfinite(squeeze(sum(wh_events(15,:,:),2))));
 
 % combine temperatures at H
 t3_events_tmp(1,:,:) = t3_events;
 t_events = [th_events permute(t3_events_tmp,[2 1 3])];
 zt_events = [zsH_isle 15];
 
-
-
 %%
 
 figure
 set(gcf, 'PaperSize', [7.0 7.0]);
 set(gcf, 'PaperPosition', [0 0 6.8 6.2])
-
-% ax1 = subplot(15,2,[1:2:5])
-% pcolor(datetime_events*24,distance/1000,squeeze(nanmean(tdts_events,3))')
-% shading flat
-% colormap(ax1,jet)
-% colorbar
-% title('DTS temperature [^oC]')
-% ylabel('distance, d [km]')
 
 ax = subplot(15,2,[1:2:5])
 pos = get(ax, 'Position');
@@ -243,13 +233,11 @@ pos = get(ax, 'Position');
 pos(1) = pos(1)+0.1;
 set(ax,'Position',pos)
 pcolorjw(mitime_events*24,G.M.z(zi),squeeze(nanmean(real(wg_events(:,zi,:)),3))')
-%pcolorjw(mitime_events,G.M.z(zi),squeeze(nanmean(real(wg_events(:,zi,:)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
 cbar = colorbar;
 set(cbar,'visible','off')
-%title('G - eastward velocity')
 ylim([0,12])
 hold on
 contour(datetime_events*24,12-zsG_isle,squeeze(nanmean(tG_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
@@ -348,4 +336,4 @@ u_stderrmax_i = max(u_std_i/(length(isfinite(wi_events(1,1,:))))) % divide by nu
 v_std_i = squeeze(nanstd(imag(wi_events(:,1,:)),[],3))';
 v_stderrmax_i = max(v_std_i/(length(isfinite(wi_events(1,1,:))))) % divide by number of events and take maximum
 
-print -dpng figures_paper/fig_h_event_composite_allsites.png
+print -dpng ../figures/fig_h_event_composite_allsites.png

@@ -1,9 +1,9 @@
 clear all
 
-plot_event = 0;
+plot_event = 1;
 
 load_dts_isle_data
-detide_c;
+%detide_c;
 
 nfilt = 3;
 
@@ -16,7 +16,6 @@ tsgc = interp1(mdaysg,wtsg(:,3),datetime);
 % 5 - calibration point 5
 % c - corner of DTS cable
 % e - end of DTS cable
-
 
 ti = 1:length(eventi);
 
@@ -32,9 +31,11 @@ clear c_*
 clear cpx cpy cpax cpay
 clear *_events
 
+% indices of events to plot (three)
+pii = [1,5,15];
+
 ii = 1;
 for kk = 1:length(ti)
-%for kk = 1:1
     
     jj = ti(kk);
     t1 = event_daten(jj)-0.25;
@@ -55,9 +56,10 @@ for kk = 1:length(ti)
     % use only events where data is good (check corner)
     if ~isnan(tempC(zic,di))
     
-        for zii = 1:40
+        for zi = 1:40
+            %zii = zi+40;
+            zii = zi;
             zjj = zii;
-            %zii = 10;
             % modify points
             zicr = zic; %  corner
             zi5 = zic-zii;
@@ -125,10 +127,6 @@ for kk = 1:length(ti)
             phi = atan((cp_ce/cp_5c)*cscd(ang_e5) - cotd(ang_e5));
             phi2 = atan(cotd(ang_5c) - (cp_ce/cp_e5)*cscd(ang_5c));
 
-            %disp(datestr(datetime(di(1))))
-            %disp(['phi_1 = ' num2str(phi*180/pi)])
-            %disp(['phi_2 = ' num2str(phi2*180/pi)])
-
             % magnitude of phase velocity
             cp1 = cp_ce*cos(phi);
             cp2 = cp_5c*cos(ang_e5*pi/180 - phi);
@@ -153,12 +151,9 @@ for kk = 1:length(ti)
             phixy = theta*pi/180-phi; 
 
             % mean tidal velocity in direction of phase propagation
-             cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
+            cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
 
             zoff = 0.75; % difference between bottom and ADCP height
-
-            %uhm_tide = mean(depthavg(C.utide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-            %vhm_tide = mean(depthavg(C.vtide(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
 
             uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
             vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
@@ -172,31 +167,29 @@ for kk = 1:length(ti)
             wcc = wc*exp(-i*phixy);
 
 
-            wcdt = C.M.evm + i*C.M.nvm - C.utide - i*C.vtide;
-            wccdt = wcdt*exp(-i*phixy);
+%             wcdt = C.M.evm + i*C.M.nvm - C.utide - i*C.vtide;
+%             wccdt = wcdt*exp(-i*phixy);
 
             % remove background current
             cpa = cp-mean(uhmc_tide);
 
-            dx_d(zii) = (distance(end)-distance(end-1))*(zii);
-            dy_d(zii) = (distance(end)-distance(end-1))*(zjj);
+            dx_d(zi) = (distance(end)-distance(end-1))*(zii);
+            dy_d(zi) = (distance(end)-distance(end-1))*(zjj);
 
-            ur_d(zii) = mean(uhmc_tide);
-            u_d(zii) = mean(real(whm_tide));
-            v_d(zii) = mean(imag(whm_tide));
+            ur_d(zi) = mean(uhmc_tide);
+            u_d(zi) = mean(real(whm_tide));
+            v_d(zi) = mean(imag(whm_tide));
 
-            cp_d(zii) = cp;
-            cpa_d(zii) = cpa;
-            phixy_d(zii) = phixy;
+            cp_d(zi) = cp;
+            cpa_d(zi) = cpa;
+            phixy_d(zi) = phixy;
 
-            cpx_d(zii) = cp*cos(phixy);
-            cpy_d(zii) = cp*sin(phixy);
+            cpx_d(zi) = cp*cos(phixy);
+            cpy_d(zi) = cp*sin(phixy);
 
-            cpax_d(zii) = cpa*cos(phixy);
-            cpay_d(zii) = cpa*sin(phixy);
+            cpax_d(zi) = cpa*cos(phixy);
+            cpay_d(zi) = cpa*sin(phixy);
         end
-        
-        %n = 20;
         
         m = 1;
         n = 40;
@@ -240,59 +233,11 @@ for kk = 1:length(ti)
         cpay(ii) = mean(cpay_dvg);
         cpax_std(ii) = std(cpax_dvg);
         cpay_std(ii) = std(cpay_dvg);        
-        
-        if ii==1
-            
-            figure(1)
-            set(gcf, 'PaperSize', [7.0 7]);
-            set(gcf, 'PaperPosition', [0 0 7 7])   
 
-            subplot(221)
-            h1 = plot(dxa_dvg,cpax_dvg,'-','color',[.7 .7 .7],'linewidth',2);
-            hold on
-            h2 = plot(dxa_dvg,cpay_dvg,'k-','linewidth',2);
-            xlabel('\Deltad in onshore direction [m]')
-            ylabel(['[m/s]'])
-            leg = legend([h1(1);h2(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
-
-%             subplot(222)
-%             plot(dy_d,cpay_d,'k.')
-%             hold on
-%             plot(dy_d,cpax_d,'.','color',[.7 .7 .7])
-%             xlabel('\Deltad in east direction [m]')
-%             ylabel('[m/s]')
-% 
-%             subplot(2,2,[3:4])
-%             h = histogram(cpay_dv,40,'normalization','count');
-%             hold on
-%             hh = histogram(cpax_dv,40,'normalization','count');
-%             h.FaceColor = [0 0 0];
-%             hh.FaceColor = [1 1 1];
-%             title('histogram for \Deltad \leq 75m')
-%             legh = legend([hh(1);h(1)],'c^\prime_{p}^x','c^\prime_{p}^y','location','northwest');
-%             ylabel('count')
-%             xlabel('[m/s]')
-
-            title(datestr(event_daten(jj)))
-            hold off
-
-
-            %print('-dpdf',['figures_paper/fig_event_cp_stats_' datestr(datetime(di(1)),'YYYYMMDD')])
-
-        end
-        
-        
         %%
-        
-%         cpx(ii) = cp*cos(phixy);
-%         cpy(ii) = cp*sin(phixy);
-%         
-%         cpax(ii) = cpa*cos(phixy);
-%         cpay(ii) = cpa*sin(phixy);
         
         cpa_event(ii) = cpa;
         cp_event(ii) = cp;    
-        %phixy_event(ii) = phixy;
     
         daten_events(ii) = event_daten(jj);
         t3_events(:,ii) = tcal3(di);
@@ -310,119 +255,183 @@ for kk = 1:length(ti)
         wi_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)';   
         wg_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)'; 
         wc_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)'; 
-        wcdt_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)' - C.utide(:,Ii)' - i*C.vtide(:,Ii)'; 
+        %wcdt_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)' - C.utide(:,Ii)' - i*C.vtide(:,Ii)'; 
         intensc_events(:,:,ii) = 0.25*(C.M.intens1(:,Ii)' + C.M.intens2(:,Ii)'+C.M.intens3(:,Ii)' + C.M.intens4(:,Ii)');   
         
         %%
         zt_all = [zsC_isle 15];
         if plot_event
-            figure
-            set(gcf, 'PaperSize', [8.5 6.0]);
-            set(gcf, 'PaperPosition', [0 0 5 7.0])
+            set(gcf, 'PaperSize', [6.0 9.5]);
+            set(gcf, 'PaperPosition', [0 0 6.5 5])   
+            
+            event_match = ii == pii;
+            if any(event_match)
+                col = find(event_match);
+                if col == 1
+                    labels = ['a)';'b)';'c)';'d)'];
+                elseif col == 2
+                    labels = ['e)';'f)';'g)';'h)'];
+                else 
+                    labels = ['i)';'j)';'k)';'l)'];
+                end
+                    
+                subplot(7,3,col)
+                ddi = di(1):di(end)+120;
+                plot(datetime(ddi),t5(ddi),'r','linewidth',1.5);
+                hold on
+                plot(datetime(ddi),tcrn(ddi),'k','linewidth',1.5);
+                plot(datetime(ddi),tend(ddi),'b','linewidth',1.5);
+                ms = 4;
+                plot(datetime(di(i5)),t5(di(i5)),'ro','markerfacecolor','r','markersize',ms);
+                plot(datetime(di(ic)),tcrn(di(ic)),'ko','markerfacecolor','k','markersize',ms);
+                plot(datetime(di(ie)),tend(di(ie)),'bo','markerfacecolor','b','markersize',ms);
+                title({datestr(event_daten(jj))},'fontsize',10)
+                hold off
+                xlim([t1 t2]);
+                xl = xlim;
+                ymax = max([t5(ddi);tcrn(ddi);tend(ddi)]);
+                ymin = min([t5(ddi);tcrn(ddi);tend(ddi)]);
+                ylim([ymin-0.1 ymax+0.1])
+                datetick('x','keeplimits')
+                set(gca,'XTickLabel',[])
+                if col == 1
+                    ylabel('[deg C]')
+                    fs = 8;
+                    text(event_daten(jj)+0.08,19.75,'onshore','fontsize',fs,'color','b')
+                    text(event_daten(jj)+0.08,19.55,'corner','fontsize',fs,'color','k')
+                    text(event_daten(jj)+0.08,19.35,'east','fontsize',fs,'color','r')
+                end
+                set(gca,'tickdir','out')
+                xl = double(xlim);
+                yl = double(ylim);
+                text(xl(1)-0.18*diff(xl),yl(2)+0.22*diff(yl),labels(1,:))
+                if col == 3
+                    text(xl(2)+0.03,yl(2),'DTS T')
+                end
 
-            subplot(711)
-            ddi = di(1):di(end)+120;
-            plot(datetime(ddi),t5(ddi),'r','linewidth',2);
-            hold on
-            plot(datetime(ddi),tcrn(ddi),'k','linewidth',2);
-            plot(datetime(ddi),tend(ddi),'b','linewidth',2);
-            plot(datetime(di(i5)),t5(di(i5)),'ro','markerfacecolor','r');
-            plot(datetime(di(ic)),tcrn(di(ic)),'ko','markerfacecolor','k');
-            plot(datetime(di(ie)),tend(di(ie)),'bo','markerfacecolor','b');
-            title({datestr(event_daten(jj)),...
-                        'DTS temperature at three points'})
-            leg = legend('east','corner','onshore','location','northeast');
-            set(leg,'fontsize',8)
-            hold off
-            xlim([t1 t2+4/24]);
-            xl = xlim;
-            ymax = max([t5(ddi);tcrn(ddi);tend(ddi)]);
-            ymin = min([t5(ddi);tcrn(ddi);tend(ddi)]);
-            ylim([ymin-0.1 ymax+0.1])
-            datetick('x','keeplimits')
-            ylabel('[deg C]')
-            set(gca,'XTickLabel',[])
+                ax2 = subplot(7,3,[3,6]+col);
+                pcolor(datetime(di),distance/1000,tempC(:,di)-tcrn(di(ic))) 
+                shading flat
+                datetick('x')
+                colormap(ax2,jet)
+                xlim(xl)
+                hold on
+                plot(xl,[distance(zi5)/1000 distance(zi5)/1000],'k--')
+                plot(xl,[distance(zicr)/1000 distance(zicr)/1000],'k--')
+                plot(xl,[distance(zie)/1000 distance(zie)/1000],'k--')
+                hold off
+                caxis([-0.9,0.9])
+                set(gca,'XTickLabel',[])
+                if col == 1
+                    ylabel({'distance','d [km]'})
+                end
+                if col == 3
+                    cbar = colorbar('east');
+                    pos = get(cbar,'position');
+                    shift = 0.1;
+                    shifty = -0.03;
+                    squeeze = 0.5;
+                    squeezey = 0.75;
+                    pos(1) = pos(1)+shift;
+                    pos(2) = pos(2)+shifty;
+                    pos(3) = pos(3)*squeeze;
+                    pos(4) = pos(4)*squeezey;
+                    set(cbar,'position',pos)
+                end
+                set(gca,'tickdir','out')
+                xl = double(xlim);
+                yl = double(ylim);
+                text(xl(1)-0.18*diff(xl),yl(2)+0.02*diff(yl),labels(2,:))
+                if col == 3
+                    text(xl(2)+0.03,yl(2),{'DTS T','anomaly','[deg C]'},'verticalalignment','top')
+                end
+                
+                ax3 = subplot(7,3,[9,12]+col);
+                pcolor(C.M.mtime,C.M.z+zoff,real(wc));
+                shading flat
+                caxiscen;
+                cax = caxis;
+                caxis([-.3 .3])
+                hold on
+                tc_all = [tc(di,:) tsgc(di)];
+                contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5])
+                [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',1.5);
+                clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
+                hold off
+                colormap(ax3,redblue)
+                xlim(xl)
+                ylim([0 15])
+                datetick('x','keeplimits')
+                set(gca,'layer','top')
+                set(gca,'XTickLabel',[])
+                if col == 1
+                    ylabel('[mab]')
+                end
+                if col == 3
+                    cbar = colorbar('east');
+                    pos = get(cbar,'position');
+                    pos(1) = pos(1)+shift;
+                    pos(2) = pos(2)+shifty;
+                    pos(3) = pos(3)*squeeze;
+                    pos(4) = pos(4)*squeezey;                    
+                    set(cbar,'position',pos)
+                end
+                set(gca,'tickdir','out')
+                xl = double(xlim);
+                yl = double(ylim);
+                text(xl(1)-0.28*diff(xl),yl(2)+0.02*diff(yl),labels(3,:))
+                if col == 3
+                    text(xl(2)+0.03,yl(2),{'east','velocity','[m/s]'},'verticalalignment','top')
+                end
+                
+                ax4 = subplot(7,3,[15,18]+col);
+                pcolor(C.M.mtime,C.M.z+zoff,imag(wc));
+                shading flat
+                caxiscen;
+                cax = caxis;
+                caxis([-.3 .3])
+                hold on
+                tc_all = [tc(di,:) tsgc(di)];
+                zt_all = [zsC_isle 15];
+                contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5],'linewidth',0.5)
+                [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',1.5);
+                clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
+                hold off
+                colormap(ax4,redblue)
+                xlim(xl)
+                ylim([0 15])
+                datetick('x','keeplimits')
+                set(gca,'layer','top')
+                if col == 1
+                    ylabel('[mab]')
+                end
+                if col == 3
+                    cbar = colorbar('east');
+                    pos = get(cbar,'position');
+                    pos(1) = pos(1)+shift;
+                    pos(2) = pos(2)+shifty;
+                    pos(3) = pos(3)*squeeze;
+                    pos(4) = pos(4)*squeezey;                    
+                    set(cbar,'position',pos)
+                end
+                set(gca,'tickdir','out')
+                xl = double(xlim);
+                yl = double(ylim);
+                text(xl(1)-0.28*diff(xl),yl(2)+0.02*diff(yl),labels(4,:))  
+                if col == 3
+                    text(xl(2)+0.03,yl(2),{'north','velocity','[m/s]'},'verticalalignment','top')
+                end
+            end
 
-
-            ax2 = subplot(7,1,[2:3]);
-            pcolor(datetime(di),distance/1000,tempC(:,di)) 
-            shading flat
-            datetick('x')
-            colormap(ax2,jet)
-            colorbar('east')
-            xlim(xl)
-            hold on
-            plot(xl,[distance(zi5)/1000 distance(zi5)/1000],'k--')
-            plot(xl,[distance(zicr)/1000 distance(zicr)/1000],'k--')
-            plot(xl,[distance(zie)/1000 distance(zie)/1000],'k--')
-            hold off
-            ylabel('distance, d [km]')
-            title('DTS temperature [^oC]')
-            set(gca,'XTickLabel',[])
-
-            ax3 = subplot(7,1,[4:5]);
-            pcolor(C.M.mtime,C.M.z+zoff,real(wc));
-            %pcolor(C.M.mtime,C.M.z,C.M.evm);
-            shading flat
-            caxiscen;
-            cax = caxis;
-            caxis([-.4 .4])
-            hold on
-            tc_all = [tc(di,:) tsgc(di)];
-            contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5])
-            [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
-            clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
-            hold off
-            colormap(ax3,redblue)
-            colorbar('east')
-            xlim(xl)
-            ylabel('[mab]')
-            ylim([0 15])
-            title({'eastward velocity [m/s]'})
-            datetick('x','keeplimits')
-            set(gca,'layer','top')
-            set(gca,'XTickLabel',[])
-
-            ax4 = subplot(7,1,[6:7]);
-            pcolor(C.M.mtime,C.M.z+zoff,imag(wc));
-            %pcolor(C.M.mtime,C.M.z,C.M.nvm);
-            shading flat
-            caxiscen;
-            cax = caxis;
-            caxis([-.1 .1])
-            hold on
-            tc_all = [tc(di,:) tsgc(di)];
-            zt_all = [zsC_isle 15];
-            contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5])
-            [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
-            clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
-            hold off
-            colormap(ax4,redblue)
-            colorbar('east')
-            xlim(xl)
-            ylabel('[mab]')
-            ylim([0 15])
-            title({'northward velocity [m/s]'}) 
-            datetick('x','keeplimits')
-            set(gca,'layer','top')
-
-            print('-cmyk','-dpng',['figures_paper/events/fig_temp_velocity_' datestr(datetime(di(1)),'yyyymmdd')])
-            %print('-dpng',['figures/h_events_agu/h_event_propagation_profile_' datestr(datetime(di(1)),'mmdd_HHMM')])
-        
-%             figure
-%             quiver(cpax(ii),cpay(ii))
-%             hold on
-%             quiver(cpx(ii),cpy(ii))
         end
-        %%
-        ii = ii+1;
-        
+        ii = ii+1;     
     end
 end
 
+print('-cmyk','-dpng',['../figures/fig_temp_velocity_c_events'])
 
 %%
-figure(1)
+figure
 subplot(2,2,3)
 set(gcf, 'PaperSize', [7.0 6.0]);
 set(gcf, 'PaperPosition', [0 0 7.0 6.0])
@@ -442,4 +451,4 @@ set(h.hMain,'MarkerFaceColor','r')
 xlabel('c_{p}^x [m/s]')
 ylabel('c_{p}^y [m/s]')
 title('absolute phase velocity')
-print('-dpdf','figures_paper/fig_cp_scatter')
+print('-dpdf','../figures/fig_cp_scatter')

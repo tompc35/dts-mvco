@@ -136,4 +136,4 @@ m_text(-70.4750,41.2917,{'Wasque','Shoals'},'color','k','fontsize',8,...
 set(gcf,'renderer','zbuffer')
 set(gcf, 'PaperSize', [4.5 5]); %Keep the paper size [width height] 
 set(gcf, 'PaperPosition', [0 0.1 4.5 5]); %
-print('-dpdf',['figures_paper/fig_ISLE_DTS_map.pdf'])
+print('-dpdf',['../figures/fig_ISLE_DTS_map.pdf'])

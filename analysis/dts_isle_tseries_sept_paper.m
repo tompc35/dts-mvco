@@ -186,4 +186,4 @@ p = get(s1, 'position');
 offset = 0.11;
 set(s1, 'position', [p(1), p(2)-offset, p(3), p(4)+offset]);
 
-print -dpng -r600 figures_paper/fig_tseries_dts_isle_sept
+print -dpng -r600 ../figures/fig_tseries_dts_isle_sept

@@ -81,7 +81,7 @@ pos = get(leg,'Position')
 set(leg,'fontsize',12,'Position',[pos(1)+0.1 pos(2)+0.066 pos(3) pos(4)])
 text(11,3,'eastward','fontsize',14)
 text(-26,3,'westward','fontsize',14)
-print('-dpng','figures_paper/fig_event_polar_histogram')
+print('-dpng','../figures/fig_event_polar_histogram')
 
 
 %%

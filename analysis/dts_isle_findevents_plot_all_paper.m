@@ -1,7 +1,6 @@
 clear all
 
 load_dts_isle_data
-%[eventi,event_daten] = get_event_indices(tcal3,tcal4,datetime);
 
 [x3,y3] = latlon2xy(lat3,lon3,lat3,lon3);
 [x4,y4] = latlon2xy(lat4,lon4,lat3,lon3);
@@ -13,19 +12,13 @@ dist5c = ((x5-xc)^2 + (y5-yc)^2)^0.5;
 
 % interpolate seagauge temp at C to DTS time base
 tsgc = interp1(mdaysg,wtsg(:,3),datetime);
-%[eventic,event_datenc] = get_event_indices(tcal5,tsgc,datetime);
 
 %%
 
 %%% Specify dates %%%
-% t1 = datenum('12-July-2014');
-% t2 = datenum('19-July-2014');
 
 t1 = datenum('13-Jul-2014 0:00');
 t2 = datenum('5-Sep-2014 0:00');
-
-% t1 = datenum('9-Aug-2014 0:00');
-% t2 = datenum('18-Aug-2014 12:00');
 
 [~,ti1] = min(abs(datetime-t1));
 [~,ti2] = min(abs(datetime-t2));
@@ -42,16 +35,11 @@ t2 = datenum('5-Sep-2014 0:00');
 [~,tivc1] = min(abs(C.M.mtime-t1));
 [~,tivc2] = min(abs(C.M.mtime-t2));
 
-% [~,tivh1] = min(abs(Hg.dnum-t1));
-% [~,tivh2] = min(abs(Hg.dnum-t2));
-
 ti = ti1:ti2;
 tim = tim1:tim2;
 tis = tis1:tis2;
 tid = tis1:tis2;
 tivc = tivc1:tivc2;
-% tivh = tivh1:tivh2;
-
 
 close all
 
@@ -87,7 +75,6 @@ plot(datetime(ti),(tcal3(ti)-tcal4(ti))/dist34,'b-','linewidth',1)
 xlim([t1 t2])
 hold on
 plot(datetime(ti),(tcal5(ti)-tsgc(ti))/dist5c,'r-','linewidth',1)
-%plot(event_daten,tcal3(eventi)-tcal4(eventi),'r.','markersize',10)
 hold off
 legend('R3-R4','R5-C')
 datetick('x','keeplimits')
@@ -99,4 +86,4 @@ ylabel('[^oC km^{-1}]','fontsize',fs)
 set(gca,'ytick',[-2:1:2],'fontsize',fs)
 box on
 
-print -dpng -cmyk -r500 figures_paper/fig_event_threshold
+print -dpng -cmyk -r500 ../figures/fig_event_threshold
