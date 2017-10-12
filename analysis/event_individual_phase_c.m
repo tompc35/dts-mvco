@@ -54,11 +54,10 @@ for kk = 1:length(ti)
     % use only events where data is good (check corner)
     if ~isnan(tempC(zic,di))
     
-        for zi = 1:40
-            %zii = zi+40;
-            zii = zi;
+        for zii = 1:40
             zjj = zii;
-            % modify points
+            
+            % modify points which 3 points are being used in calculation
             zicr = zic; %  corner
             zi5 = zic-zii;
             zie = zic+zjj;
@@ -68,10 +67,13 @@ for kk = 1:length(ti)
 
             late = lat_dts(zie);
             lone = lon_dts(zie);
+            
+            lat5 = lat_dts(zi5);
+            lon5 = lon_dts(zi5);
 
             % geometry of mooring array
             xc = 0; yc = 0;
-            [x5,y5] = latlon2xy(lat_dts(zi5),lon_dts(zi5),latc,lonc);
+            [x5,y5] = latlon2xy(lat5,lon5,latc,lonc);
             [xe,ye] = latlon2xy(late,lone,latc,lonc);
 
             % angle of deviation of c-e line from x (eastward) axis
@@ -163,33 +165,30 @@ for kk = 1:length(ti)
             wc = C.M.evm + i*C.M.nvm;
             wcc = wc*exp(-i*phixy);
 
-
-%             wcdt = C.M.evm + i*C.M.nvm - C.utide - i*C.vtide;
-%             wccdt = wcdt*exp(-i*phixy);
-
             % remove background current
             cpa = cp-mean(uhmc_tide);
 
-            dx_d(zi) = (distance(end)-distance(end-1))*(zii);
-            dy_d(zi) = (distance(end)-distance(end-1))*(zjj);
+            dx_d(zii) = (distance(end)-distance(end-1))*(zii);
+            dy_d(zii) = (distance(end)-distance(end-1))*(zjj);
 
-            ur_d(zi) = mean(uhmc_tide);
-            u_d(zi) = mean(real(whm_tide));
-            v_d(zi) = mean(imag(whm_tide));
+            ur_d(zii) = mean(uhmc_tide);
+            u_d(zii) = mean(real(whm_tide));
+            v_d(zii) = mean(imag(whm_tide));
 
-            cp_d(zi) = cp;
-            cpa_d(zi) = cpa;
-            phixy_d(zi) = phixy;
+            cp_d(zii) = cp;
+            cpa_d(zii) = cpa;
+            phixy_d(zii) = phixy;
 
-            cpx_d(zi) = cp*cos(phixy);
-            cpy_d(zi) = cp*sin(phixy);
-
-            cpax_d(zi) = cpa*cos(phixy);
-            cpay_d(zi) = cpa*sin(phixy);
+            cpx_d(zii) = cp*cos(phixy);
+            cpy_d(zii) = cp*sin(phixy);
+            cpax_d(zii) = cpa*cos(phixy);
+            cpay_d(zii) = cpa*sin(phixy);
         end
         
+        % choose the range of distances to analyze
         m = 1;
         n = 40;
+        
         cpx_dv = vecshape(cpx_d(m:n));
         cpy_dv = vecshape(cpy_d(m:n));
         
@@ -233,24 +232,8 @@ for kk = 1:length(ti)
         cp_event(ii) = cp;    
     
         daten_events(ii) = event_daten(jj);
-        t3_events(:,ii) = tcal3(di);
-        t5_events(:,ii) = t5(di);
-        tcrn_events(:,ii) = tcrn(di);
-        tend_events(:,ii) = tend(di);
-        tnode_events(:,ii) = tnode(di);
-        th_events(:,:,ii) = th(di,:);
-        tc_events(:,:,ii) = tc(di,:);
-        tsgc_events(:,:,ii) = tsgc(di,:);
-        te_events(:,:,ii) = te(di,:);
-        tI_events(:,:,ii) = tI(di,:);
-        tG_events(:,:,ii) = tG(di,:);
-        tdts_events(:,:,ii) = tempC(:,di)';
-        wi_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)';   
-        wg_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)'; 
-        wc_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)'; 
-        intensc_events(:,:,ii) = 0.25*(C.M.intens1(:,Ii)' + C.M.intens2(:,Ii)'+C.M.intens3(:,Ii)' + C.M.intens4(:,Ii)');   
-        
-        %%
+
+        %%% Make plots of three individual events
         zt_all = [zsC_isle 15];
         if plot_event
             set(gcf, 'PaperSize', [6.0 9.5]);
@@ -422,7 +405,7 @@ end
 
 print('-cmyk','-dpng',['../figures/fig_temp_velocity_c_events'])
 
-%%
+%% Scatter plots of phase velocity
 figure
 subplot(2,2,3)
 set(gcf, 'PaperSize', [7.0 6.0]);
