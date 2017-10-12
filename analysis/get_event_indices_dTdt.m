@@ -1,13 +1,6 @@
 function [eventi,event_daten] = get_event_indices_dTdt(T,daten,thresh)
 
-% find all times when temperature difference is below a critical threshold
-% (strong negative gradient, cooler towards east)
-% define threshold as mean - sd*(std dev)
-% default sd = 2
-
-%tdiff = t1-t2;
-%thresh = nanmean(tdiff)-sd*nanstd(tdiff);
-%thresh = nanmean(tdiff)-2*nanstd(tdiff);
+% find all times when temperature time derivative is below a critical threshold
 
 dt = (daten(2)-daten(1))*24;
 dTdt = NaN*T;

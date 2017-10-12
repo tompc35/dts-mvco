@@ -3,8 +3,6 @@ clear all
 plot_event = 1;
 
 load_dts_isle_data
-%detide_c;
-
 nfilt = 3;
 
 % interpolate seagauge temp at C to DTS time base
@@ -94,7 +92,6 @@ for kk = 1:length(ti)
 
             tcrn = tempC(zicr,:);
             tend = tempC(zie,:);
-            %t5 = tcal5';t5 
             t5 = tempC(zi5,:);
 
             tcrn = boxfilt(tcrn,nfilt);
@@ -207,8 +204,6 @@ for kk = 1:length(ti)
         cpax_dv = cpax_dv(fi);
         cpay_dv = cpay_dv(fi);
         
-        %ch_crit = norminv(1-1/(4*length(cpax_dv)),0,1);
-        
         % Remover outliers using modified z-score of  Iglewicz and Hoaglin (1993)
         % http://www.itl.nist.gov/div898/handbook/eda/section3/eda35h.htm
         gi = find(abs(zscore_mod(cpx_dv)) <= 3.5 & ...
@@ -233,8 +228,6 @@ for kk = 1:length(ti)
         cpay(ii) = mean(cpay_dvg);
         cpax_std(ii) = std(cpax_dvg);
         cpay_std(ii) = std(cpay_dvg);        
-
-        %%
         
         cpa_event(ii) = cpa;
         cp_event(ii) = cp;    
@@ -255,7 +248,6 @@ for kk = 1:length(ti)
         wi_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)';   
         wg_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)'; 
         wc_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)'; 
-        %wcdt_events(:,:,ii) = C.M.evm(:,Ii)' + i*C.M.nvm(:,Ii)' - C.utide(:,Ii)' - i*C.vtide(:,Ii)'; 
         intensc_events(:,:,ii) = 0.25*(C.M.intens1(:,Ii)' + C.M.intens2(:,Ii)'+C.M.intens3(:,Ii)' + C.M.intens4(:,Ii)');   
         
         %%
