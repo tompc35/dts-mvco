@@ -81,7 +81,7 @@ for kk = 1:length(ti)
             
             dt = (datetime(2)-datetime(1))*86400;
             
-            [cp,phixy,ic,ie,i5] = phase_velocity(lonc,latc,tcrn(di),late,lone,tend(di),lon5,lat5,t5(di),dt);
+            [cp,phixy,ic,ie,i5] = phase_velocity(lonc,latc,tcrn(di),lone,late,tend(di),lon5,lat5,t5(di),dt);
             
             % find start and end time of event passage
             tstart = datetime(di(min([i5 ic ie])));
