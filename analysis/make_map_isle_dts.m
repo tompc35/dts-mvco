@@ -9,7 +9,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 clear all
-load_data_paths;
+run ../data_paths
 
 warning off
 position_file = '../data/ISLE_asdeployed.mat';

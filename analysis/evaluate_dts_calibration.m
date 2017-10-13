@@ -3,15 +3,12 @@
 % DTS calibration using full (time-averaged) data set
 
 clear all
+run ../data_paths
 
 config_name = 'asit';
 
-data_dir = '/Users/tomconnolly/work/Data/';
-
-dts_dir = [data_dir 'DTS_nc/'];
 dts_nc = [dts_dir 'DTS' config_name '_timeavg.nc'];
 cal_nc = [dts_dir 'DTS' config_name '_cal.nc'];
-wtcalfile = [data_dir 'DTS_cal/WaterTempPro/temppro_cals.mat'];
 distance = nc_varget(dts_nc,'distance');
 datetime = nc_varget(dts_nc,'datetime');
 

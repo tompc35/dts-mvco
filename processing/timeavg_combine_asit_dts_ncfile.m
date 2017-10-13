@@ -1,26 +1,31 @@
-% timeavg_asit_dts_ncfile
+% timeavg_combine_asit_dts_ncfile
 
 nc_dir = '/media/tompc/data/DTS_nc/';
 
-dts_filename_in = 'DTSasit_01_channel1';
+% List filenames from deployments to be combined along time axis
+dts_filenames = {'DTSasit_01_channel1',
+                'DTSasit_02c_channel1'};
 
-if strcmp(dts_filename_in,'DTSasit_02c_channel1')
-    t_start = datenum('17-Jul-2014 19:50:00');
-    t_end = datenum('31-Oct-2014 13:30:00');
-elseif strcmp(dts_filename_in,'DTSasit_01_channel1')
-    t_start = datenum('11-Jul-2014 18:10:00');
-    t_end = datenum('17-Jul-2014 19:20:00');    
-end
+t_start = datenum('11-Jul-2014 18:20:00');
+t_end = datenum('31-Oct-2014 13:30:00');
 
 t_interval = 10*60/86400; % time interval (days)
 
 %%%
 
-dts_nc_in = [nc_dir dts_filename_in '.nc'];
-dts_nc_out = [nc_dir dts_filename_in '_timeavg.nc'];
+dts_nc_out = [nc_dir 'DTSasit_timeavg.nc'];
 
+% Start reading from first file
+filei = 1;
+dts_nc_in = [nc_dir  char(dts_filenames(1)) '.nc'];
 datetime = ncread(dts_nc_in,'datetime');
 distance = ncread(dts_nc_in,'distance');
+
+% check to see if there is a datetime offset and adjust if necessary
+try
+    datetime_offset = ncread(dts_nc_in,'datetime_offset');
+    datetime = datetime - datetime_offset/24; % adjust all times to GMT
+end
 
 datetime_new = t_start:t_interval:t_end;
 
@@ -73,12 +78,21 @@ netcdf.putVar(ncid,date_varID,0,nt,datetime_new);
 
 netcdf.close(ncid);
 
+
 tic 
 disp('averaging and writing new file')
 for ii = 1:length(datetime_new)
     if mod(ii,100)==0
         disp(['iteration ' num2str(ii) ', ' datestr(datetime_new(ii))])
     end
+    
+    % Move on to next file if entire file has been read
+    if datetime_new(ii) > datetime(end)
+        filei = filei+1;
+        dts_nc_in = [nc_dir  char(dts_filenames(filei)) '.nc'];
+        datetime = ncread(dts_nc_in,'datetime');
+    end
+    
     ti = find(datetime >= datetime_new(ii) - t_interval/2 & ...
         datetime < datetime_new(ii) + t_interval/2);
     

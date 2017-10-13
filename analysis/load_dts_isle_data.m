@@ -1,4 +1,4 @@
-load_data_paths
+run ../data_paths
 
 load(microcat_mat)
 mday_isle = jd2matday(jd_isle);
