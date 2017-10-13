@@ -17,12 +17,7 @@ tsgc = interp1(mdaysg,wtsg(:,3),datetime);
 
 ti = 1:length(eventi);
 
-th = interp1(mday_isle,wtH_isle,datetime);
 tc = interp1(mday_isle,wtC_isle,datetime);
-te = interp1(mday_isle,wtE_isle,datetime);
-tI = interp1(mday_isle,wtI_isle,datetime);
-tG = interp1(mday_isle,wtG_isle,datetime);
-tnode = interp1(mday_node,wtb_node,datetime);
 
 close all
 clear c_*
@@ -39,16 +34,13 @@ for kk = 1:length(ti)
     t1 = event_daten(jj)-0.25;
     t2 = event_daten(jj)+0.25;
     di = find(datetime>=t1 & datetime<=t2);
-    hi = find(H.ttime>=t1 & H.ttime<t2);
-    Ii = find(I.M.mtime>=t1 & I.M.mtime<t2);
     Ci = find(C.M.mtime>=t1 & C.M.mtime<t2);
     tim = find(mday_isle>=t1 & mday_isle<=t2);
     
     if ii == 1
         datetime_events = datetime(di)-event_daten(jj);
         mday_isle_events = mday_isle(tim)-event_daten(jj);
-        ttime_events = H.ttime(hi)-event_daten(jj);
-        mitime_events = I.M.mtime(Ii)-event_daten(jj);
+        mitime_events = C.M.mtime(Ci)-event_daten(jj);
     end
     
     % use only events where data is good (check corner)

@@ -6,7 +6,6 @@ mday_isle = jd2matday(jd_isle);
 load(seagauge_mat)
 mdaysg = jd2matday(jdsg');
 
-load(node_mat)
 Equad = load(quadpod_e_mat);
 
 C = load(adcp_c_mat);

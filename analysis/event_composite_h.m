@@ -13,24 +13,17 @@ E.M.nvm(find(E.M.nvm == 999)) = NaN;
 
 %%
 
-%[eventi,event_daten] = get_event_indices(tcal3,tcal4,datetime,2);
 nfilt = 3;
 [eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-0.5);
-%[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-1.0);
-%detide_g;
-%detide_i;
 
 %%
 
 % find where H time series starts
-% tmin=min(H.ttime(find(isfinite(sum(H.uu)))));
-% ti = find(event_daten > tmin);
 ti = 1:length(eventi);
 
 th = interp1(mday_isle,wtH_isle,datetime);
 tc = interp1(mday_isle,wtC_isle,datetime);
 tG = interp1(mday_isle,wtG_isle,datetime);
-tnode = interp1(mday_node,wtb_node,datetime);
 
 % combine temperature mooring and quadpod at site E
 tem = interp1(mday_isle,wtE_isle,datetime);
@@ -46,7 +39,6 @@ zsI_isle = [zsI_isle, 20.63];
 
 close all
 for ii = 1:length(ti)
-%for ii = 1:1
     jj = ti(ii);
     t1 = event_daten(jj)-0.3;
     t2 = event_daten(jj)+0.3;
@@ -62,14 +54,11 @@ for ii = 1:length(ti)
         te_events = nan([length(di) size(te,2) length(ti)]);
         tI_events = nan([length(di) size(tI,2) length(ti)]);
         tG_events = nan([length(di) size(tG,2) length(ti)]);
-        tnode_events = nan([length(di) length(ti)]);
+
         tdts_events = nan([length(di) size(tempC,1) length(ti)]);
         wh_events = nan([length(hi) length(H.zz) length(ti)])+i*nan([length(hi) length(H.zz) length(ti)]);
-        %wh_detide_events = nan([length(hi) length(H.zz) length(ti)])+i*nan([length(hi) length(H.zz) length(ti)]);
         wi_events = nan([length(Ii) length(I.M.z) length(ti)]);
-        %wi_detide_events = nan([length(Ii) length(I.M.z) length(ti)]);   
         wg_events = nan([length(Ii) length(G.M.z) length(ti)]);
-        %wg_detide_events = nan([length(Ii) length(G.M.z) length(ti)]);
         we_events = nan([length(Ii) length(E.M.z) length(ti)]);
         datetime_events = datetime(di)-event_daten(jj);
         mday_isle_events = mday_isle(tim)-event_daten(jj);
@@ -78,7 +67,6 @@ for ii = 1:length(ti)
     end
     
     t3_events(:,ii) = tcal3(di);
-    tnode_events(:,ii) = tnode(di);
     th_events(:,:,ii) = th(di,:);
     tc_events(:,:,ii) = tc(di,:);
     te_events(:,:,ii) = te(di,:);
@@ -86,19 +74,12 @@ for ii = 1:length(ti)
     tG_events(:,:,ii) = tG(di,:);
     tdts_events(:,:,ii) = tempC(:,di)';
     wh_events(:,:,ii) = H.uu(:,hi)' + i*H.vv(:,hi)';
-    %wh_detide_events(:,:,ii) = (H.uu(:,hi)-H.utide(:,hi))' +...
-    %                            i*(H.vv(:,hi)-H.vtide(:,hi))';
     wi_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)'; 
-    %wi_detide_events(:,:,ii) = I.M.evm(:,Ii)' + i*I.M.nvm(:,Ii)' - ...
-    %                            (I.utide(:,Ii)+i*I.vtide(:,Ii))';
     wg_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)'; 
-    %wg_detide_events(:,:,ii) = G.M.evm(:,Ii)' + i*G.M.nvm(:,Ii)' - ...
-    %                            (G.utide(:,Ii)+i*G.vtide(:,Ii))'; 
     we_events(:,:,ii) = E.M.evm(:,Ii)' + i*E.M.nvm(:,Ii)'; 
 end
 
 t3_events_anom = t3_events-repmat(t3_events(round(length(di)/2),:),[length(di) 1]);
-tnode_events_anom = tnode_events-repmat(tnode_events(round(length(di)/2),:),[length(di) 1]);
 
 %%
 % find events where velocity data exists at H
@@ -169,7 +150,6 @@ pos(1) = pos(1)+0.1;
 set(ax,'Position',pos)
 zi = 1:20;
 pcolorjw(ttime_events*24,H.zz,squeeze(nanmean(real(wh_events(:,:,hidx)),3))')
-%pcolorjw(ttime_events,H.zz,squeeze(nanmean(real(wh_events(:,:,hidx)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
@@ -207,7 +187,6 @@ contour(datetime_events*24,15-zt_events,squeeze(nanmean(t_events(:,:,hidx),3))',
 title('H - northward velocity')
 ylim([0,15])
 caxis([-0.2,0.2])
-%caxis([-0.07,0.07])
 ylabel('[mab]')
 set(gca,'xtick',[-6:3:6])
 xl = double(xlim);
