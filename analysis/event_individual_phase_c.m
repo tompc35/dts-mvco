@@ -71,85 +71,24 @@ for kk = 1:length(ti)
             lat5 = lat_dts(zi5);
             lon5 = lon_dts(zi5);
 
-            % geometry of mooring array
-            xc = 0; yc = 0;
-            [x5,y5] = latlon2xy(lat5,lon5,latc,lonc);
-            [xe,ye] = latlon2xy(late,lone,latc,lonc);
-
-            % angle of deviation of c-e line from x (eastward) axis
-            theta = atan2(ye,xe)*180/pi;
-
-            % length of triangle segments
-            length_5c = sqrt((x5-xc)^2 + (y5-yc)^2);
-            length_ce = sqrt((xc-xe)^2 + (yc-ye)^2);
-            length_e5 = sqrt((xe-x5)^2 + (ye-y5)^2);
-
-            % angles of triangle (law of cosines)
-            ang_5c = acos((-length_5c^2 + length_ce^2 + length_e5^2) ...
-                            /(2*length_ce*length_e5))*180/pi;
-            ang_ce = acos((-length_ce^2 + length_e5^2 + length_5c^2) ...
-                            /(2*length_e5*length_5c))*180/pi;      
-            ang_e5 = acos((-length_e5^2 + length_5c^2 + length_ce^2) ...
-                            /(2*length_5c*length_ce))*180/pi;  
-
             tcrn = tempC(zicr,:);
             tend = tempC(zie,:);
-            t5 = tempC(zi5,:);
-
+            t5 = tempC(zi5,:);   
+            
             tcrn = boxfilt(tcrn,nfilt);
             tend = boxfilt(tend,nfilt);
             t5 = boxfilt(t5,nfilt);
-
+            
             dt = (datetime(2)-datetime(1))*86400;
-
-            dTdtcrn = nan(size(tcrn));
-            dTdtcrn(2:end-1) = 0.5*(tcrn(3:end)-tcrn(1:end-2))/dt;
-
-            dTdtend = nan(size(tend));
-            dTdtend(2:end-1) = 0.5*(tend(3:end)-tend(1:end-2))/dt;
-
-            dTdt5 = nan(size(t5));
-            dTdt5(2:end-1) = 0.5*(t5(3:end)-t5(1:end-2))/dt;
-
-
-            [~,i5] = min(dTdt5(di));
-            [~,ic] = min(dTdtcrn(di));
-            [~,ie] = min(dTdtend(di));
-
+            
+            [cp,phixy,ic,ie,i5] = phase_velocity(lonc,latc,tcrn(di),late,lone,tend(di),lon5,lat5,t5(di),dt);
+            
+            % find start and end time of event passage
             tstart = datetime(di(min([i5 ic ie])));
             tf = datetime(di(max([i5 ic ie])));
 
-            cp_5c = 1000*length_5c/((i5-ic)*dt);
-            cp_ce = -1000*length_ce/((ic-ie)*dt);
-            cp_e5 = 1000*length_e5/((ie-i5)*dt);    
-
-            phi = atan((cp_ce/cp_5c)*cscd(ang_e5) - cotd(ang_e5));
-            phi2 = atan(cotd(ang_5c) - (cp_ce/cp_e5)*cscd(ang_5c));
-
-            % magnitude of phase velocity
-            cp1 = cp_ce*cos(phi);
-            cp2 = cp_5c*cos(ang_e5*pi/180 - phi);
-            cp3 = cp_e5*cos(phi+ang_5c*pi/180);
-
-            if isfinite(cp1)
-                cp = cp1;
-            elseif isfinite(cp2)
-                cp = cp2;
-            elseif isfinite(cp3)
-                cp = cp3;
-            else 
-                cp = NaN;
-            end
-
-            if cp < 0
-               cp = -cp;
-               phi = phi - pi;
-            end
-
-            % angle of propagation relative to x-axis
-            phixy = theta*pi/180-phi; 
-
-            % mean tidal velocity in direction of phase propagation
+            % mean tidal velocity in direction of phase propagation during
+            % passage of event
             cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
 
             zoff = 0.75; % difference between bottom and ADCP height
