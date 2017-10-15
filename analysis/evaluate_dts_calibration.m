@@ -29,7 +29,7 @@ refzi1 = 15:58;     % cal bath #1 (cooler)
 refzi2 = 65:92;     % cal bath #2 (tote)
 refzi3 = find(distance >= 132 & distance <= 154);   % anchor / SBE39 0650
 refzi4 = find(distance >= 920 & distance <= 930); % WT Pro - 1269446 
-refzi5 = find(distance >= 3938 & distance <= 3948); % WT Pro - 1269445
+refzi5 = find(distance >= 3878 & distance <= 4004); % WT Pro - 1269445
 refzi6 = find(distance >= 4572 & distance <= 4582); % WT Pro - 1269447 
 
 datetime = ncread(dts_nc,'datetime');
