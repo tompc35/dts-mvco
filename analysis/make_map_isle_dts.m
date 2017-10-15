@@ -17,7 +17,6 @@ load(position_file);
 warning on
 
 config_name = 'asit';
-cal_nc = [dts_dir 'DTS' config_name '_cal.nc'];
 lon_dts = ncread(dts_nc,'lon');
 lat_dts = ncread(dts_nc,'lat');
 d_dts = ncread(dts_nc,'distance');
@@ -40,7 +39,7 @@ lat5 = interp1(d_dts,lat_dts,d5);
 lon6 = interp1(d_dts,lon_dts,d6);
 lat6 = interp1(d_dts,lat_dts,d6);
 
-c= load([data_dir 'coastline/MAB.mat']);
+c= load([data_dir 'bathy/coastline_MAB.mat']);
 load([data_dir 'bathy/eastcoastbathy']);
 b = load([data_dir 'bathy/crm_capecod.mat']);
 

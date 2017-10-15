@@ -1,13 +1,13 @@
-data_dir = '/Users/tomconnolly/work/Data/';
+data_dir = '../../DTS-MVCO-data/';
 
-microcat_dir = [data_dir 'ISLE/microcats/'];
-seagauge_dir = [data_dir 'ISLE/seagauge/'];
-wtpro_dir = [data_dir 'DTS_cal/WaterTempPro/'];
-adcp_dir = [data_dir 'ISLE/ADCP/'];
-dts_dir = [data_dir 'DTS_nc/'];
-quadpod_dir = [data_dir 'ISLE/quadpod/'];
+microcat_dir = [data_dir 'ISLE_mat/microcats/'];
+seagauge_dir = [data_dir 'ISLE_mat/seagauge/'];
+wtpro_dir = [data_dir 'DTS_MVCO_cal/WaterTempPro/'];
+adcp_dir = [data_dir 'ISLE_mat/ADCP/'];
+dts_dir = [data_dir 'DTS_MVCO_nc/'];
+quadpod_dir = [data_dir 'ISLE_mat/quadpod/'];
 
-dts_nc = [dts_dir '/proc/cal_6/DTSasit_proc.nc'];
+dts_nc = [dts_dir 'DTSasit_proc.nc'];
 cal_nc = [dts_dir 'DTSasit_cal.nc'];
 
 microcat_mat = [microcat_dir 'microcats.mat'];
@@ -18,6 +18,7 @@ adcp_g_mat = [adcp_dir 'ISLE_G__burstmeans_06-Mar-2015.mat'];
 adcp_h_mat = [adcp_dir 'ISLE_H_corrected_11252015.mat'];
 adcp_i_mat = [adcp_dir 'ISLE_I_burstmeans_06-Mar-2015.mat'];
 
-wtcalfile = [data_dir 'DTS_cal/WaterTempPro/temppro_cals.mat'];
+cal_dir = [data_dir 'DTS_MVCO_cal/'];
+wtcalfile = [cal_dir 'WaterTempPro/temppro_cals.mat'];
 
 quadpod_e_mat = [quadpod_dir 'ISLE_E_quadpod_temp_ave_08172016.mat'];

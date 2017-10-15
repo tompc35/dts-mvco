@@ -5,11 +5,11 @@
 % Flag points based on a threshold of the "gamma"  calibration parameter,
 % since low gamma values are associated with large errors.
 %
-% Average to 10m, trim anchor and tower segment, and assign lat/lon points.
+% Average to 5m, trim anchor and tower segment, and assign lat/lon points.
 %
 % Write data to a NetCDF file.
 %
-% Stokes and Anti-Stokes backscatter is best averaged as the log power
+% Stokes and Anti-Stokes backscatter is best averaged in distance as the log power
 % ratio (LPR):
 % log(Stokes/AntiStokes) 
 %
@@ -17,20 +17,19 @@
 % January 2015
 
 clear all
+run ../data_paths
 
 config_name = 'asit';
 
-dts_dir = '/media/tompc/data/DTS_nc/';
-out_dir = '/media/tompc/data/DTS_nc/';
+out_dir = dts_dir;
 
 dts_nc = [dts_dir 'DTS' config_name '_timeavg.nc'];
 cal_nc = [dts_dir 'DTS' config_name '_cal.nc'];
 
 out_nc = [out_dir 'DTS' config_name '_proc.nc']; 
 
-wtcalfile = '/media/tompc/data/DTS_cal/WaterTempPro/temppro_cals.mat';
-
-gps_file = ['/media/tompc/data/DTS_cal/GPS/DTS_GPS_westcable.txt'];
+wtcalfile = [cal_dir 'WaterTempPro/temppro_cals.mat'];
+gps_file = [cal_dir 'GPS/DTS_GPS_westcable.txt'];
 
 gamma_thresh = 300;     % threshold for gamma flag
 dz = 5;                % averaging distance (m)
@@ -80,10 +79,10 @@ lat_gps = lat_gps(iu);
 
 refzi1 = 15:58;     % cal bath #1 (cooler)
 refzi2 = 65:92;     % cal bath #2 (tote)
-refzi3 = find(distance >= 121 & distance <= 143)+11;   % anchor / SBE39 0650
-refzi4 = find(distance >= 920 & distance <= 930); % WT Pro - 1269446 (corrected distance)
-refzi5 = find(distance >= 3867 & distance <= 3993)+11; % WT Pro - 1269445 (deployment uncertainty - time)
-refzi6 = find(distance >= 4703 & distance <= 4713)+11-142; % WT Pro - 1269447 (deployment uncertainty - time)
+refzi3 = find(distance >= 132 & distance <= 154);   % anchor / SBE39 0650
+refzi4 = find(distance >= 920 & distance <= 930); % WT Pro - 1269446 
+refzi5 = find(distance >= 3878 & distance <= 4004); % WT Pro - 1269445 
+refzi6 = find(distance >= 4572 & distance <= 4582); % WT Pro - 1269447 
 
 
 %%% Load calibration data %%%

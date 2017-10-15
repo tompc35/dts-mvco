@@ -1,6 +1,12 @@
 % timeavg_combine_asit_dts_ncfile
 
-nc_dir = '/media/tompc/data/DTS_nc/';
+clear all
+run ../data_paths
+
+% Directories for input/output
+
+nc_dir = dts_dir;
+dts_nc_out = [nc_dir 'DTSasit_timeavg.nc'];
 
 % List filenames from deployments to be combined along time axis
 dts_filenames = {'DTSasit_01_channel1',
@@ -10,10 +16,6 @@ t_start = datenum('11-Jul-2014 18:20:00');
 t_end = datenum('31-Oct-2014 13:30:00');
 
 t_interval = 10*60/86400; % time interval (days)
-
-%%%
-
-dts_nc_out = [nc_dir 'DTSasit_timeavg.nc'];
 
 % Start reading from first file
 filei = 1;

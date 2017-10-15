@@ -1,6 +1,8 @@
 % timeavg_asit_dts_ncfile
+clear all
+run ../data_paths
 
-nc_dir = '/media/tompc/data/DTS_nc/';
+nc_dir = dts_dir;
 nc_out = [nc_dir 'DTSasit_cal.nc'];
 
 t_start = datenum('11-Jul-2014 18:20:00');
@@ -10,7 +12,7 @@ datetime_new = t_start:t_interval:t_end;
 
 %%% load variables from seabird sensors
 
-sbe_dir = '/media/tompc/data/DTS_cal/Seabird/';
+sbe_dir = [cal_dir 'Seabird/'];
 
 sbe_name = 'DTS_temp_sbe0648_11112014.asc';
 [tempC_648,day,time] = textread([sbe_dir sbe_name],'%n%s%s','headerlines',36,'delimiter',',');
@@ -30,7 +32,7 @@ dnum_687 = datenum([char(day) char(time)],'dd mmm yyyyHH:MM:SS');
 
 %%% load variables from water temp pro sensors
 
-wtpro_dir = '/media/tompc/data/DTS_cal/WaterTempPro/';
+wtpro_dir = [cal_dir 'WaterTempPro/'];
 
 wtpro_name = 'DTS_cal_1038035_20141113.csv';
 [num,daytime,tempC_035] = textread([wtpro_dir wtpro_name],'%n%s%n','headerlines',2,'delimiter',',');
