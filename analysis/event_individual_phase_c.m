@@ -338,9 +338,10 @@ print('-cmyk','-dpng',['../figures/fig_temp_velocity_c_events'])
 
 %% Scatter plots of phase velocity
 figure
-subplot(2,2,3)
-set(gcf, 'PaperSize', [7.0 6.0]);
-set(gcf, 'PaperPosition', [0 0 7.0 6.0])
+
+subplot(2,2,2)
+set(gcf, 'PaperSize', [7.0 2.7]);
+set(gcf, 'PaperPosition', [0 -3.1 7.0 6.0])
 h = errorbarxy(cpax,cpay,cpax_std,cpay_std,{'ko', 'k', 'k'});
 axis equal
 hz = zeroline('xy');
@@ -348,6 +349,18 @@ set(h.hMain,'MarkerFaceColor','r')
 xlabel('c^\prime_{p}^x [m/s]')
 ylabel('c^\prime_{p}^y [m/s]')
 title('phase velocity relative to mean flow')
+text(cpax(1),cpay(1),'A ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+text(cpax(5),cpay(5),'B ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+text(cpax(15),cpay(15),'C ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+xl = xlim;
+yl = ylim;
+text(xl(1)+0.02*diff(xl),yl(2)-0.05*diff(yl),'b)')
 
 subplot(221)
 h = errorbarxy(cpx,cpy,cpx_std,cpy_std,{'ko', 'k', 'k'});
@@ -357,4 +370,31 @@ set(h.hMain,'MarkerFaceColor','r')
 xlabel('c_{p}^x [m/s]')
 ylabel('c_{p}^y [m/s]')
 title('absolute phase velocity')
+text(cpx(1),cpy(1),'A ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+text(cpx(5),cpy(5),'B ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+text(cpx(15),cpy(15),'C ',...
+    'verticalalignment','bottom',...
+    'horizontalalignment','right')
+xl = xlim;
+yl = ylim;
+text(xl(1)+0.02*diff(xl),yl(2)-0.05*diff(yl),'a)')
+
+%%% Print phase velocity information for three events plotted
+evi = [1,5,15];
+
+for ii = 1:length(evi)
+    disp(datestr(daten_events(evi(ii))))
+    disp('-----------------------')
+    disp(['cp_x = ' num2str(cpx(evi(ii)),3)])
+    disp(['cp_y = ' num2str(cpy(evi(ii)),3)])
+    disp(['cp_x (adj) = ' num2str(cpax(evi(ii)),3)])
+    disp(['cp_y (adj) = ' num2str(cpay(evi(ii)),3)])
+end
+
+
+
 print('-dpdf','../figures/fig_cp_scatter')

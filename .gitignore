@@ -2,3 +2,5 @@
 *.png
 .DS_Store
 *.log
+analysis/old/
+data/mvco_bathy.mat

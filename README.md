@@ -6,6 +6,10 @@ Lateral Exchange (ISLE) project south of Martha's Vineyard in 2014.
 
 ## Dependencies
 
+* SNCTOOLS
+December 2 2013 -r4053 
+http://mexcdf.sourceforge.net
+
 * t_tide
 Version 1.02
 https://www.eoas.ubc.ca/~rich/#T_Tide
