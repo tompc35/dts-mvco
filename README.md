@@ -5,9 +5,9 @@ distributed temperature sensing (DTS) system deployed during the Inner Shelf
 Lateral Exchange (ISLE) project south of Martha's Vineyard in 2014.
 
 ## Running the code
-* Edit [data_paths.m]() so that `data_dir` variable points to the right location on your machine. By default, the data and code directories are assumed to be in the same overarching directory.
-* *Optional* - Run [master_dts_processing.m]() to generate processed and calibrated DTS data in NetCDF format.
-* Run [master_dts_analysis.m]() to generate figures.
+* Edit [data_paths.m](data_paths.m) so that `data_dir` variable points to the right location on your machine. By default, the data and code directories are assumed to be in the same overarching directory.
+* *Optional* - Run [master_dts_processing.m](master_dts_processing.m) to generate processed and calibrated DTS data in NetCDF format.
+* Run [master_dts_analysis.m](master_dts_analysis.m) to generate figures.
 
 ## Dependencies
 
