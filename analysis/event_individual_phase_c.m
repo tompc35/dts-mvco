@@ -260,7 +260,7 @@ for kk = 1:length(ti)
                 caxis([-.3 .3])
                 hold on
                 tc_all = [tc(di,:) tsgc(di)];
-                contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5])
+                contour(datetime(di),15-zt_all,tc_all',[0:.25:100],'color',[0.5 0.5 0.5])
                 [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',1.5);
                 clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
                 hold off
@@ -295,11 +295,11 @@ for kk = 1:length(ti)
                 shading flat
                 caxiscen;
                 cax = caxis;
-                caxis([-.3 .3])
+                caxis([-.15 .15])
                 hold on
                 tc_all = [tc(di,:) tsgc(di)];
                 zt_all = [zsC_isle 15];
-                contour(datetime(di),15-zt_all,tc_all',[0:.1:100],'color',[0.5 0.5 0.5],'linewidth',0.5)
+                contour(datetime(di),15-zt_all,tc_all',[0:.25:100],'color',[0.5 0.5 0.5],'linewidth',0.5)
                 [c,h] = contour(datetime(di),15-zt_all,tc_all',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',1.5);
                 clabel(c,h,'color',[0.3 0.3 0.3],'labelspacing',1000)
                 hold off

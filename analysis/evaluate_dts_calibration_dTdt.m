@@ -144,65 +144,59 @@ fi = find(abs(gamma)<=gamma_thresh);
 t4q = t4;
 t4q(fi) = NaN;
 
+t5q = t5;
+t5q(fi) = NaN;
+
+
 %%
 
+nfilt = 3;
+
+tcal4f = nan(size(t4q));
+t4qf = nan(size(t4q));
+tcal4f(2:end-1) = boxfilt(tcal4,nfilt);
+t4qf(2:end-1) = boxfilt(t4q,nfilt);
+
+tcal5f = nan(size(t5q));
+t5qf = nan(size(t5q));
+tcal5f(2:end-1) = boxfilt(tcal5,nfilt);
+t5qf(2:end-1) = boxfilt(t5q,nfilt);
+
+dt = (datetime(2)-datetime(1))*24;
+dTdt4 = nan(size(t4qf));
+dTdt4(2:end-1) = (t4qf(3:end)-t4qf(1:end-2))/(2*dt);
+dTdtcal4 = nan(size(tcal4f));
+dTdtcal4(2:end-1) = (tcal4f(3:end)-tcal4f(1:end-2))/(2*dt);
+
+dTdt5 = nan(size(t5qf));
+dTdt5(2:end-1) = (t5qf(3:end)-t5qf(1:end-2))/(2*dt);
+dTdtcal5 = nan(size(tcal4f));
+dTdtcal5(2:end-1) = (tcal5f(3:end)-tcal5f(1:end-2))/(2*dt);
+
 figure
-subplot(2,2,[1 2])
-plot(datetime,[t4],'color',[0.5 0.5 0.5]), datetick('x')
+plot(datetime,dTdt4)
 hold on
-plot(datetime,[tcal4],'r'), datetick('x')
-plot(datetime,t4q,'b')
-hold off
-ylim([15 21])
-title('temperature at R4 [deg C]')
-leg = legend('DTS','WTPro','DTS (QC)');
-set(leg,'box','off')
-set(gca,'fontsize',14)
-xlim([datenum('July 10 2014') datenum('Oct 20 2014')])
-ylim([15 21.5])
-yl = ylim;
-xl = xlim;
-text(xl(1)+diff(xl)*.03,yl(2)-diff(yl)*.07,'a)','fontsize',12)
+plot(datetime,dTdtcal4)
+xlim([datenum('7-14-2014') datenum('7-18-2014 12:00')])
+datetick('x','keeplimits')
 
-subplot(2,2,3)
-h =patch([-300 -300 300 300],[0 12 12 0],[0.5 0.5 0.5],'edgecolor',[0.5 0.5 0.5],'linestyle','none','edgecolor',[0.5 0.5 0.5]);
+figure
+plot(datetime,dTdt5)
 hold on
-plot(gamma,abs(t4-tcal4),'.','color','b','markersize',8)
-hold off
-ylim([0 12])
-xlim([-4000 4000])
-ylabel('T error [deg C]')
-xlabel('\gamma [deg K]')
-set(gca,'fontsize',14)
-box on
-yl = ylim;
-xl = xlim;
-text(xl(1)+diff(xl)*.02,yl(2)-diff(yl)*.07,'b)','fontsize',12)
+plot(datetime,dTdtcal5)
+xlim([datenum('7-14-2014') datenum('7-18-2014 12:00')])
+datetick('x','keeplimits')
 
+figure
+plot(dTdt4,dTdtcal4,'.')
 
-subplot(2,2,4)
-plot(t4(gi),tcal4(gi),'b.')
-xlabel('cable T [deg C]')
-ylabel('sensor T [deg C]')
-rmse = sqrt(nanmean((t4(gi)-tcal4(gi)).^2));
-bias = nanmean(t4(gi)-tcal4(gi));
-set(gca,'fontsize',14)
-ylim([15 21])
-xlim([15 21])
-axis square
-hold on
-plot([15 21],[15 21],'--','color',[0.5 0.5 0.5])
-set(gca,'xtick',[15:21])
-hold off
-yl = ylim;
-xl = xlim;
-text(xl(1)+diff(xl)*.15,yl(2)-diff(yl)*.05,['RMSE = ' num2str(rmse,2) '^oC'])
-text(xl(1)+diff(xl)*.15,yl(2)-diff(yl)*.15,['bias = ' num2str(bias,2) '^oC'])
-text(xl(1)+diff(xl)*.02,yl(2)-diff(yl)*.07,'c)','fontsize',12)
+gi = find(isfinite(dTdt4+dTdtcal4));
+[r,p] = corrcoef(dTdt4(gi),dTdtcal4(gi));
+disp(['site R4 dT/dt: r = ' num2str(r(2),3)])
 
+figure
+plot(dTdt5,dTdtcal5,'.')
 
-
-set(gcf, 'PaperSize', [7 5.5]); %Keep the paper size [width height] 
-set(gcf, 'PaperPosition', [0 0 7 5.5]); %
-
-print -dpdf ../figures/fig_DTS_error_summary
+gi = find(isfinite(dTdt5+dTdtcal5));
+[r,p] = corrcoef(dTdt5(gi),dTdtcal5(gi));
+disp(['site R5 dT/dt: r = ' num2str(r(2),3)])
