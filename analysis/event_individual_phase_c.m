@@ -7,7 +7,7 @@ nfilt = 3;
 
 % interpolate seagauge temp at C to DTS time base
 tsgc = interp1(mdaysg,wtsg(:,3),datetime);
-[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,-0.5);
+[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,-0.25);
 
 %%
 
@@ -394,7 +394,5 @@ for ii = 1:length(evi)
     disp(['cp_x (adj) = ' num2str(cpax(evi(ii)),3)])
     disp(['cp_y (adj) = ' num2str(cpay(evi(ii)),3)])
 end
-
-
 
 print('-dpdf','../figures/fig_cp_scatter')
