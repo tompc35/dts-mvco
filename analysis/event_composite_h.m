@@ -14,7 +14,7 @@ E.M.nvm(find(E.M.nvm == 999)) = NaN;
 %%
 
 nfilt = 3;
-[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-0.5);
+[eventi,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,-0.25);
 
 %%
 

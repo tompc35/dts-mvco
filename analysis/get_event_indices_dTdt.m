@@ -4,9 +4,15 @@ function [eventi,event_daten] = get_event_indices_dTdt(T,daten,thresh)
 
 dt = (daten(2)-daten(1))*24;
 dTdt = NaN*T;
-dTdt(2:end-1) = (T(3:end)-T(1:end-2))/dt;
+dTdt(2:end-1) = 0.5*(T(3:end)-T(1:end-2))/dt;
 
-ti = find(dTdt < thresh);
+if sign(thresh) == -1
+    ti = find(dTdt < thresh);
+elseif sign(thresh) == 1
+    ti = find(dTdt > thresh);
+else
+    error('threshold cannot be zero!');
+end
 
 % find indices of event start
 starti = ti(find(diff([0; ti]) > 1));
