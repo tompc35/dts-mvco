@@ -27,7 +27,7 @@ Huint = interp1(H.ttime,H.uu(end,:),datetime);
 Cuint = interp1(C.M.mtime,C.M.evm(12,:),datetime);
 
 nfilt = 3;
-thresh = -0.75;
+thresh = -0.25;
 [eventih,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,thresh);
 [eventic,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,thresh);
 [eventii,event_daten] = get_event_indices_dTdt(boxfilt(tI(:,end),nfilt),datetime,thresh);

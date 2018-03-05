@@ -23,5 +23,11 @@ https://www.eoas.ubc.ca/~rich/#T_Tide
 Version 1.4h
 https://www.eoas.ubc.ca/~rich/map.html
 
+* RPSstuff
+https://woodshole.er.usgs.gov/operations/sea-mat/RPSstuff-html/index.html
+
+* movingstd
+https://www.mathworks.com/matlabcentral/fileexchange/9428-movingstd---movingstd2
+
 * Code has been run using MATLAB R2015a on a MacBook Pro with 2.5 GHz Core i7
 processor.

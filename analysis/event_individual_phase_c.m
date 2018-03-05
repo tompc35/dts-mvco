@@ -5,6 +5,8 @@ plot_event = 1;
 load_dts_isle_data
 nfilt = 3;
 
+detide_c;
+
 % interpolate seagauge temp at C to DTS time base
 tsgc = interp1(mdaysg,wtsg(:,3),datetime);
 [eventi,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,-0.25);
@@ -76,17 +78,34 @@ for kk = 1:length(ti)
             [cp,phixy,ic,ie,i5] = phase_velocity(lonc,latc,tcrn(di),lone,late,tend(di),lon5,lat5,t5(di),dt);
             
             % find start and end time of event passage
-            tstart = datetime(di(min([i5 ic ie])));
-            tf = datetime(di(max([i5 ic ie])));
+            %tstart = datetime(di(min([i5 ic ie])));
+            %tf = datetime(di(max([i5 ic ie])));
+            tstart = datetime(di(ic)-7);
+            tf = datetime(di(ic)-5);            
 
             % mean tidal velocity in direction of phase propagation during
             % passage of event
-            cmi = find(C.M.mtime>=tstart & C.M.mtime<tf);
+            cmi = find(C.M.mtime>=tstart & C.M.mtime<=tf);
+            %cmi = max(cmi);
+            if ~isempty(cmi)
+                cmih = [(cmi(1)-2):(cmi(1)-1)];
+                %cmih = [(cmi(end)+3):(cmi(end)+4)];
+                %cmih = [(cmi(end)+1):(cmi(end)+2)];
+                %cmih = round(mean(cmi));
+            else
+                cmih = cmi;
+            end
 
             zoff = 0.75; % difference between bottom and ADCP height
 
-            uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
-            vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15),2);
+            uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15));
+            vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15));
+            
+            %uhm_tide = mean(C.M.evm(1,cmi));
+            %vhm_tide = mean(C.M.nvm(1,cmi));
+            
+            %uhm_tide = mean(depthavg(C.utide(1:17,cmih),15-(C.M.z(1:17)+zoff),15),2);
+            %vhm_tide = mean(depthavg(C.vtide(1:17,cmih),15-(C.M.z(1:17)+zoff),15),2);
 
             whm_tide = uhm_tide+i*vhm_tide;
 
@@ -94,7 +113,7 @@ for kk = 1:length(ti)
             uhmc_tide = real(whmc_tide);   
 
             wc = C.M.evm + i*C.M.nvm;
-            wcc = wc*exp(-i*phixy);
+            %wcc = wc*exp(-i*phixy);
 
             % remove background current
             cpa = cp-mean(uhmc_tide);
@@ -114,11 +133,14 @@ for kk = 1:length(ti)
             cpy_d(zii) = cp*sin(phixy);
             cpax_d(zii) = cpa*cos(phixy);
             cpay_d(zii) = cpa*sin(phixy);
+            
+            whm_tide_d(zii) = whm_tide;
+            uhmc_tide_d(zii) = uhmc_tide;
         end
         
         % choose the range of distances to analyze
         m = 1;
-        n = 40;
+        n = 15;
         
         cpx_dv = vecshape(cpx_d(m:n));
         cpy_dv = vecshape(cpy_d(m:n));
@@ -157,13 +179,26 @@ for kk = 1:length(ti)
         cpax(ii) = mean(cpax_dvg);
         cpay(ii) = mean(cpay_dvg);
         cpax_std(ii) = std(cpax_dvg);
-        cpay_std(ii) = std(cpay_dvg);        
+        cpay_std(ii) = std(cpay_dvg);   
+        
+        whm_event(ii) = nanmean(whm_tide_d);
+        uhmc_event(ii) = nanmean(uhmc_tide_d);        
         
         cpa_event(ii) = cpa;
         cp_event(ii) = cp;    
     
         daten_events(ii) = event_daten(jj);
-
+        
+        t3_events(:,ii) = tcal3(di);
+        t5_events(:,ii) = t5(di);
+        tcrn_events(:,ii) = tcrn(di);
+        tend_events(:,ii) = tend(di);
+        tc_events(:,:,ii) = tc(di,:);
+        tsgc_events(:,:,ii) = tsgc(di,:);
+        tdts_events(:,:,ii) = tempC(:,di)'; 
+        wc_events(:,:,ii) = C.M.evm(:,Ci)' + i*C.M.nvm(:,Ci)'; 
+        wcdt_events(:,:,ii) = C.M.evm(:,Ci)' + i*C.M.nvm(:,Ci)' - C.utide(:,Ci)' - i*C.vtide(:,Ci)'; 
+        
         %%% Make plots of three individual events
         zt_all = [zsC_isle 15];
         if plot_event
@@ -236,12 +271,12 @@ for kk = 1:length(ti)
                     pos = get(cbar,'position');
                     shift = 0.1;
                     shifty = -0.03;
-                    squeeze = 0.5;
-                    squeezey = 0.75;
+                    sqz = 0.5;
+                    sqzy = 0.75;
                     pos(1) = pos(1)+shift;
                     pos(2) = pos(2)+shifty;
-                    pos(3) = pos(3)*squeeze;
-                    pos(4) = pos(4)*squeezey;
+                    pos(3) = pos(3)*sqz;
+                    pos(4) = pos(4)*sqzy;
                     set(cbar,'position',pos)
                 end
                 set(gca,'tickdir','out')
@@ -278,8 +313,8 @@ for kk = 1:length(ti)
                     pos = get(cbar,'position');
                     pos(1) = pos(1)+shift;
                     pos(2) = pos(2)+shifty;
-                    pos(3) = pos(3)*squeeze;
-                    pos(4) = pos(4)*squeezey;                    
+                    pos(3) = pos(3)*sqz;
+                    pos(4) = pos(4)*sqzy;                    
                     set(cbar,'position',pos)
                 end
                 set(gca,'tickdir','out')
@@ -316,8 +351,8 @@ for kk = 1:length(ti)
                     pos = get(cbar,'position');
                     pos(1) = pos(1)+shift;
                     pos(2) = pos(2)+shifty;
-                    pos(3) = pos(3)*squeeze;
-                    pos(4) = pos(4)*squeezey;                    
+                    pos(3) = pos(3)*sqz;
+                    pos(4) = pos(4)*sqzy;                    
                     set(cbar,'position',pos)
                 end
                 set(gca,'tickdir','out')
@@ -350,13 +385,13 @@ xlabel('c^\prime_{p}^x [m/s]')
 ylabel('c^\prime_{p}^y [m/s]')
 title('phase velocity relative to mean flow')
 text(cpax(1),cpay(1),'A ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 text(cpax(5),cpay(5),'B ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 text(cpax(15),cpay(15),'C ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 xl = xlim;
 yl = ylim;
@@ -371,13 +406,13 @@ xlabel('c_{p}^x [m/s]')
 ylabel('c_{p}^y [m/s]')
 title('absolute phase velocity')
 text(cpx(1),cpy(1),'A ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 text(cpx(5),cpy(5),'B ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 text(cpx(15),cpy(15),'C ',...
-    'verticalalignment','bottom',...
+    'verticalalignment','top',...
     'horizontalalignment','right')
 xl = xlim;
 yl = ylim;
@@ -396,3 +431,147 @@ for ii = 1:length(evi)
 end
 
 print('-dpdf','../figures/fig_cp_scatter')
+
+%%
+t0i = find(mitime_events==0);
+dt0i = find(datetime_events==0);
+zsi = 18; % surface adcp bin
+
+% bottom velocity at front arrival
+wb_events = squeeze(wcdt_events(t0i+6,1,:));
+
+% 
+g = 9.8;
+H = 15; % water depth
+alpha = 2.629e-4; % thermal expansion coeff (from T_dens_regression.m)
+rho0 = 1025;
+
+% stratification estimate
+Tc_events = [tc_events tsgc_events];
+lagi = 6; % -6 is a 1 hour lead
+%zti = length(zt_all);
+zti = 3;
+deltaTc = squeeze(Tc_events(dt0i-lagi,end,:)-Tc_events(dt0i-lagi,1,:));
+deltazc = zt_all(end-1)-zt_all(end);
+dTdzc = deltaTc./deltazc;
+deltarhoc = deltaTc*rho0*alpha;
+drhodzc = deltarhoc./deltazc;
+N = sqrt((g/1025)*drhodzc);
+
+%temporal temperature difference
+T1 = tsgc_events(dt0i+6,:); % before
+T2 = tsgc_events(dt0i-6,:); % after
+Tdiff = T2-T1;
+rhodiff = alpha*rho0*Tdiff;
+
+%horizontal temperature difference
+tdts2 = tsgc_events(dt0i,:);
+tdts1 = t5_events(dt0i,:);
+
+tdts1 = squeeze(tdts_events(dt0i,zic-20,:))';
+tdts2 = squeeze(tdts_events(dt0i,zic+20,:))';
+
+Tdiffh = tdts2-tdts1;
+rhodiffh = alpha*rho0*Tdiffh;
+
+deltaT2 = squeeze(Tc_events(dt0i+lagi,2:end,:)-Tc_events(dt0i+lagi,1:end-1,:));
+deltaz = zt_all(2:end)-zt_all(1:end-1);
+deltaz2 = repmat(deltaz,[size(deltaT2,2),1]);
+dTdz2 = -deltaT2'./deltaz2;
+[~,si] = max(dTdz2,[],2);
+
+h = 7.5; % h = 1/2 d, energy conserving case (Benjamin 1968)
+
+c0 = sqrt(2*g*h.*rhodiff/rho0);
+S = -rhodiffh./deltarhoc';
+
+cpmag = sqrt(cpx.^2+cpy.^2);
+cpamag = sqrt(cpax.^2+cpay.^2);
+
+phi = angle(cpx+i*cpy);
+um = real(whm_event.*exp(-i*phi));
+cpa2 = cpmag - um;
+cpamag2 = abs(cpa2);
+cpax2 = cpamag2.*cos(phi);
+cpay2 = cpamag2.*sin(phi);
+
+cwave = N*15/3.14;
+
+% linear regression analysis
+gi = isfinite(cpamag+rhodiff);
+[r,p] = corrcoef(cpmag(gi),c0(gi));
+m = polyfit(c0(gi),cpmag(gi),1);
+
+gi = isfinite(cpamag+rhodiff);
+[ra,pa] = corrcoef(cpmag(gi),c0(gi));
+ma = polyfit(c0(gi),cpamag(gi),1);
+
+gi = isfinite(cpamag+rhodiff);
+[ry,py] = corrcoef(cpy(gi),c0(gi));
+my = polyfit(c0(gi),cpy(gi),1);
+
+gi = isfinite(cpamag+rhodiff);
+[ra,pa] = corrcoef(cpamag(gi),c0(gi));
+ma = polyfit(c0(gi),cpamag(gi),1);
+
+gi = isfinite(cpamag+rhodiff);
+[ray,pay] = corrcoef(cpay(gi),c0(gi));
+may = polyfit(c0(gi),cpay(gi),1);
+
+figure()
+set(gcf,'papersize',[8,3])
+set(gcf,'paperposition',[-0.5 -2.6 9 5.5])
+
+lw = 2; % line width
+lc = [0.5 0.5 0.5]; % line color
+tc = lc; % text color
+
+subplot(231)
+scatter(c0,cpmag,30,cwave,'filled','k')
+hold on
+plot(c0,c0*m(1)+m(2),'color',lc,'linewidth',lw)
+box on
+xlabel('gravity current c_{gc} [m/s]')
+ylabel('observed c [m/s]')
+title({'phase speed','magnitude'})
+xl = xlim;
+yl = ylim;
+text(0.35*diff(xl),yl(2)-0.07*diff(yl),'a)')
+text(0.95*diff(xl),0.13*diff(yl),['m = ', num2str(m(1),3)],'color',tc)
+text(0.95*diff(xl),0.06*diff(yl),['b = ', num2str(m(2),1)],'color',tc)
+text(0.95*diff(xl),-0.05*diff(yl),['r = ', num2str(r(2),2)],'color',tc)
+text(0.95*diff(xl),-0.12*diff(yl),['p = ', num2str(p(2),1)],'color',tc)
+
+subplot(232)
+scatter(c0,cpy,30,cwave,'filled','k')
+hold on 
+plot(c0,c0*my(1)+my(2),'color',lc,'linewidth',lw)
+box on
+xlabel('gravity current c_{gc} [m/s]')
+ylabel('observed c_y [m/s]')
+title({'phase speed','onshore component'})
+xl = xlim;
+yl = ylim;
+text(0.35*diff(xl),yl(2)+0.06*diff(yl),'b)')
+text(0.95*diff(xl),yl(1)+0.33*diff(yl),['m = ', num2str(my(1),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.25*diff(yl),['b = ', num2str(my(2),1)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.14*diff(yl),['r = ', num2str(ry(2),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.06*diff(yl),['p = ', num2str(py(2),1)],'color',tc)
+
+subplot(233)
+scatter(c0,cpay,30,cwave,'filled','k')
+hold on 
+plot(c0,c0*may(1)+may(2),'color',lc,'linewidth',lw)
+xlabel('gravity current c_{gc} [m/s]')
+ylabel('observed c''_y [m/s]')
+title({'adjusted phase speed','onshore component'})
+box on
+xl = xlim;
+yl = ylim;
+text(0.36*diff(xl),yl(2)-0.07*diff(yl),'c)')
+text(0.95*diff(xl),yl(1)+0.23*diff(yl),['m = ', num2str(may(1),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.16*diff(yl),['b = ', num2str(may(2),1)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.05*diff(yl),['r = ', num2str(ray(2),2)],'color',tc)
+text(0.95*diff(xl),yl(1)-0.02*diff(yl),['p = ', num2str(pay(2),1)],'color',tc)
+
+print('-dpdf','../figures/fig_cp_compare')

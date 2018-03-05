@@ -52,6 +52,9 @@ plot(mday_isle(tim),wtH_isle(tim,:))
 xlim([t1 t2])
 hold on
 plot(datetime(ti),tcal3(ti),'k-','linewidth',1)
+ta1 = datenum('2-Sep-2014 11:30');
+plot([ta1 ta1],[17.2 17.8],'k')
+plot(ta1,17.8,'k^','markerfacecolor','k','markersize',4)
 hold off
 datetick('x','keeplimits')
 ylabel('[deg C]')
@@ -75,6 +78,9 @@ plot(mday_isle(tim),wtC_isle(tim,:))
 xlim([t1 t2])
 hold on
 plot(mdaysg(tis),wtsg(tis,3),'k-','linewidth',1)
+ta2 = datenum('3-Sep-2014 03:30');
+plot([ta2 ta2],[17.6 18.2],'k')
+plot(ta2,18.2,'k^','markerfacecolor','k','markersize',4)
 hold off
 datetick('x','keeplimits')
 title('mooring temperature [deg C]')
@@ -116,5 +122,15 @@ title('DTS cable temperature [deg C]')
 p = get(s1, 'position');
 offset = 0.11;
 set(s1, 'position', [p(1), p(2)-offset, p(3), p(4)+offset]);
+
+ax = gca;
+ax.Clipping = 'off';
+ta1 = datenum('2-Sep-2014 10:30');
+plot([ta1 ta1],[-0.5 -0.2],'k')
+plot(ta1,-0.2,'k^','markerfacecolor','k','markersize',4)
+
+ta2 = datenum('3-Sep-2014 01:30');
+plot([ta2 ta2],[3.7 4.0],'k')
+plot(ta2,4.0,'k^','markerfacecolor','k','markersize',4)
 
 print -dpng -r600 ../figures/fig_tseries_dts_isle_sept
