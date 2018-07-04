@@ -296,7 +296,7 @@ ylim([0,22])
 hold on 
 contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]), shading flat
 [c,h] = contour(datetime_events*24,22-zsI_isle,squeeze(nanmean(tI_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2), shading flat
-clabel(c,h,'fontsize',4)
+clabel(c,h,'fontsize')
 hold off
 title('I - eastward velocity')
 xlabel('time relative to event start [h]')
