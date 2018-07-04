@@ -390,9 +390,9 @@ text(cpax(1),cpay(1),'A ',...
 text(cpax(5),cpay(5),'B ',...
     'verticalalignment','top',...
     'horizontalalignment','right')
-text(cpax(15),cpay(15),'C ',...
+text(cpax(15),cpay(15)-0.003,'C ',...
     'verticalalignment','top',...
-    'horizontalalignment','right')
+    'horizontalalignment','left')
 xl = xlim;
 yl = ylim;
 text(xl(1)+0.02*diff(xl),yl(2)-0.05*diff(yl),'b)')
@@ -411,9 +411,9 @@ text(cpx(1),cpy(1),'A ',...
 text(cpx(5),cpy(5),'B ',...
     'verticalalignment','top',...
     'horizontalalignment','right')
-text(cpx(15),cpy(15),'C ',...
+text(cpx(15),cpy(15)-0.003,'C ',...
     'verticalalignment','top',...
-    'horizontalalignment','right')
+    'horizontalalignment','left')
 xl = xlim;
 yl = ylim;
 text(xl(1)+0.02*diff(xl),yl(2)-0.05*diff(yl),'a)')
@@ -438,18 +438,18 @@ dt0i = find(datetime_events==0);
 zsi = 18; % surface adcp bin
 
 % bottom velocity at front arrival
-wb_events = squeeze(wcdt_events(t0i+6,1,:));
+wb_events = squeeze(wc_events(t0i,1,:));
 
 % 
 g = 9.8;
 H = 15; % water depth
 alpha = 2.629e-4; % thermal expansion coeff (from T_dens_regression.m)
+rhointcp = 1.0277e+03; % y-intercept in linear EOS
 rho0 = 1025;
 
 % stratification estimate
 Tc_events = [tc_events tsgc_events];
 lagi = 6; % -6 is a 1 hour lead
-%zti = length(zt_all);
 zti = 3;
 deltaTc = squeeze(Tc_events(dt0i-lagi,end,:)-Tc_events(dt0i-lagi,1,:));
 deltazc = zt_all(end-1)-zt_all(end);
@@ -459,10 +459,22 @@ drhodzc = deltarhoc./deltazc;
 N = sqrt((g/1025)*drhodzc);
 
 %temporal temperature difference
-T1 = tsgc_events(dt0i+6,:); % before
-T2 = tsgc_events(dt0i-6,:); % after
+T1 = tsgc_events(dt0i-6,:); % before
+T2 = tsgc_events(dt0i+6,:); % after
 Tdiff = T2-T1;
-rhodiff = alpha*rho0*Tdiff;
+rhodiff = -alpha*rho0*Tdiff;
+
+% potential energy calculations 
+ht_all = [15,15-zt_all];
+dz = diff(ht_all);
+ht_all_2d = repmat(ht_all',[1,size(Tc_events,3)]);
+rho_t1_tmp = squeeze(rhointcp-alpha*rho0*Tc_events(dt0i-6,:,:));
+rho_t2_tmp = squeeze(rhointcp-alpha*rho0*Tc_events(dt0i+6,:,:));
+rho_t1 = [rho_t1_tmp(1,:); rho_t1_tmp];
+rho_t2 = [rho_t2_tmp(1,:); rho_t2_tmp];
+PE_t1 = trapz(ht_all,rho_t1*g.*ht_all_2d);
+PE_t2 = trapz(ht_all,rho_t2*g.*ht_all_2d);
+delta_PE = PE_t2-PE_t1;
 
 %horizontal temperature difference
 tdts2 = tsgc_events(dt0i,:);
