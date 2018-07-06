@@ -2,11 +2,9 @@
 % --------
 % Use t_tide to detide velocities from ISLE H mooring
 
- 
 const={'M2';'M6';'M8';'N2';'K1';'O1';'S1';'S2'};
 dt=.5;
 
- 
 %% 
 
 ij=find(H.ttime>datenum(2014,8,1) &  H.ttime<datenum(2015,2,10)) ;
