@@ -11,8 +11,8 @@
 clear all
 run ../data_paths
 
-position_file = '../data/ISLE_asdeployed.mat';
-hires_file = '../data/mvco_bathy.mat';
+position_file = [data_dir 'map_data/ISLE_asdeployed.mat'];
+hires_file = [data_dir 'map_data/mvco_bathy.mat'];
 
 warning off
 load(position_file);
@@ -55,8 +55,8 @@ lat5 = interp1(d_dts,lat_dts,d5);
 lon6 = interp1(d_dts,lon_dts,d6);
 lat6 = interp1(d_dts,lat_dts,d6);
 
-c= load([data_dir 'bathy/coastline_MAB.mat']);
-load([data_dir 'bathy/eastcoastbathy']);
+c= load([data_dir 'map_data/coastline_MAB.mat']);
+load([data_dir 'map_data/eastcoastbathy']);
 
 [TLON,TLAT] = meshgrid(tlon,tlat);
 tni = find(TLON < -76 & TLAT > 42);

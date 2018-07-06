@@ -84,7 +84,6 @@ refzi4 = find(distance >= 920 & distance <= 930); % WT Pro - 1269446
 refzi5 = find(distance >= 3878 & distance <= 4004); % WT Pro - 1269445 
 refzi6 = find(distance >= 4572 & distance <= 4582); % WT Pro - 1269447 
 
-
 %%% Load calibration data %%%
 tcal1s = ncread(cal_nc,'t_687'); % Seabird
 tcal1b = ncread(dts_nc,'tref_2'); % CTEMPS sensor
