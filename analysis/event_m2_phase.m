@@ -4,8 +4,8 @@ load_dts_isle_data
 detide_h;
 m2_freq = freq(5);
 
-m2_cycle = m2_amp(2)*exp(i*2*pi*(m2_freq(end)*24*datetime-m2_pha(2)));
-phase = angle(-i*m2_cycle);
+m2_cycle = m2_amp(3)*exp(i*2*pi*(m2_freq*24*datetime-m2_pha(3)));
+phase = angle(m2_cycle);
 
 % interpolate seagauge temp at C to DTS time base
 tsgc = interp1(mdaysg,wtsg(:,3),datetime);
@@ -39,15 +39,17 @@ close all
 figure
 
 subplot(211)
-plot(H.ttime,H.utide(end,:))
+plot(H.ttime,H.uu(3,:))
 hold on
-plot(datetime,-i*m2_cycle)
-xlim([datenum('9-1-2014'),datenum('9-5-2014')])
+plot(H.ttime,H.utide(3,:))
+hold on
+plot(datetime,m2_cycle)
+xlim([datenum('8-1-2014'),datenum('9-5-2014')])
 hold off
 
 subplot(212)
-plot(datetime,angle(-i*m2_cycle));
-xlim([datenum('9-1-2014'),datenum('9-5-2014')])
+plot(datetime,angle(m2_cycle));
+xlim([datenum('8-1-2014'),datenum('9-5-2014')])
 
 %%
 figure
@@ -79,8 +81,6 @@ hold off
 leg = legend('site E (far east)','site I (offshore)')
 pos = get(leg,'Position')
 set(leg,'fontsize',12,'Position',[pos(1)+0.1 pos(2)+0.066 pos(3) pos(4)])
-text(11,3,'eastward','fontsize',14)
-text(-26,3,'westward','fontsize',14)
 print('-dpng','../figures/fig_event_polar_histogram')
 
 

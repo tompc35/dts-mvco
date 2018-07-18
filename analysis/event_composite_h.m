@@ -74,7 +74,7 @@ t3_events_anom = t3_events-repmat(t3_events(round(length(di)/2),:),[length(di) 1
 
 %%
 % find events where velocity data exists at H
-hidx = find(isfinite(squeeze(sum(wh_events(15,:,:),2))));
+hidx = find(isfinite(squeeze(sum(wh_events(15,1,:),2))));
 
 % combine temperatures at H
 t3_events_tmp(1,:,:) = t3_events;
@@ -92,19 +92,19 @@ pos = get(ax, 'Position');
 pos(1) = pos(1)+0.1;
 zi = 1:20;
 set(ax, 'Position',pos);
-pcolorjw(mitime_events*24,E.M.z(zi)+3,squeeze(nanmean(real(we_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,E.M.z(zi)+3,squeeze(nanmean(real(we_events(:,zi,:)),3))');
 hold on
-contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5])
-[c,h] = contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
+contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]);
+[c,h] = contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
 clabel(c,h);
-title('E eastward velocity')
-ylabel('[mab]')
-ylim([0,15])
-caxis([-0.2,0.2])
-set(gca,'xtick',[-6:3:6])
+title('E eastward velocity');
+ylabel('[mab]');
+ylim([0,15]);
+caxis([-0.2,0.2]);
+set(gca,'xtick',[-6:3:6]);
 xl = xlim;
 yl = ylim;
-text(xl(1)-0.2*diff(xl),yl(2)+0.15*diff(yl),'a)')
+text(xl(1)-0.2*diff(xl),yl(2)+0.15*diff(yl),'a)');
 % narrow colorbar 
 cbar = colorbar;
 x=get(cbar,'Position');
@@ -113,24 +113,24 @@ x(1)=x(1)-0.01;
 x(2) = x(2)+0.1*x(4);
 x(4) = 0.8*x(4);
 x1=get(ax,'position');
-set(ax,'position',x1)
-set(cbar,'Position',x)
+set(ax,'position',x1);
+set(cbar,'Position',x);
 
 ax = subplot(15,2,[2:2:6])
 zi = 1:20;
-pcolorjw(mitime_events*24,E.M.z(zi)+3,squeeze(nanmean(imag(we_events(:,zi,:)),3))')
+pcolorjw(mitime_events*24,E.M.z(zi)+3,squeeze(nanmean(imag(we_events(:,zi,:)),3))');
 hold on
-contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5])
-contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2)
-title('E northward velocity')
+contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.1:100],'color',[0.5 0.5 0.5]);
+contour(datetime_events*24,15-zsE_isle,squeeze(nanmean(te_events,3))',[0:.5:100],'color',[0.3 0.3 0.3],'linewidth',2);
+title('E northward velocity');
 %set(cbar,'visible','off')
 %ylabel('[mab]')
-ylim([0,15])
-caxis([-0.1,0.1])
-set(gca,'xtick',[-6:3:6])
+ylim([0,15]);
+caxis([-0.1,0.1]);
+set(gca,'xtick',[-6:3:6]);
 xl = xlim;
 yl = ylim;
-text(xl(1)-0.2*diff(xl),yl(2)+0.15*diff(yl),'b)')
+text(xl(1)-0.2*diff(xl),yl(2)+0.15*diff(yl),'b)');
 % narrow colorbar 
 cbar = colorbar;
 x=get(cbar,'Position');
@@ -157,8 +157,8 @@ ax = subplot(15,2,[9:2:13])
 pos = get(ax, 'Position');
 pos(1) = pos(1)+0.1;
 set(ax,'Position',pos)
-zi = 1:20;
-pcolorjw(ttime_events*24,H.zz,squeeze(nanmean(real(wh_events(:,:,hidx)),3))')
+zi = 1:27;
+pcolorjw(ttime_events*24,H.zz(zi),squeeze(nanmean(real(wh_events(:,zi,hidx)),3))')
 shading flat
 colormap(redblue)
 caxiscen;
@@ -181,7 +181,7 @@ yl = double(ylim);
 text(xl(1)-0.2*diff(xl),yl(2)+0.15*diff(yl),'c)')
 
 subplot(15,2,[10:2:14])
-pcolorjw(ttime_events*24,H.zz,squeeze(nanmean(imag(wh_events(:,:,hidx)),3))')
+pcolorjw(ttime_events*24,H.zz(zi),squeeze(nanmean(imag(wh_events(:,zi,hidx)),3))')
 %pcolorjw(ttime_events,H.zz,squeeze(nanmean(imag(wh_events(:,:,hidx)),3))')
 shading flat
 colormap(redblue)
