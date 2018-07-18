@@ -14,6 +14,7 @@ hu=H.uu(:,ij); hv=H.vv(:,ij);
 %detide all this data and save
 hutide=nan.*hu; hvtide=nan.*hu;
 
+%hwda = dep
  
 for ii=1:length(H.zz)
     u=hu(ii,:); v=hv(ii,:);
@@ -30,8 +31,8 @@ for ii=1:length(H.zz)
     end
 end
 
-H.utide = nan(size(H.utide));
-H.vtide = nan(size(H.vtide));
+H.utide = nan(size(H.uu));
+H.vtide = nan(size(H.vv));
 H.utide(:,ij) = hutide;
 H.vtide(:,ij) = hvtide;
 

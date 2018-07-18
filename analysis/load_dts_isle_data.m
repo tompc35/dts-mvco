@@ -8,7 +8,7 @@ mdaysg = jd2matday(jdsg');
 
 Equad = load(quadpod_e_mat);
 
-H = load(adcp_h_mat);
+%H = load(adcp_h_mat);
 
 m_nc = [adcp_nc_dir 'ISLE_station_C_velocity_wd14_23-Feb-2017.nc'];
 C.M.z = ncread(m_nc,'bin_height');
@@ -19,10 +19,10 @@ C.M.evm(find(C.M.evm == 999)) = NaN;
 C.M.nvm(find(C.M.nvm == 999)) = NaN;
 
 m_nc = [adcp_nc_dir 'ISLE_station_E_velocity_wd15_23-Feb-2017.nc'];
-E.M.z = ncread(m_nc,'bin_height')
-E.M.mtime = ncread(m_nc,'datetime')
-E.M.evm = ncread(m_nc,'East_vel')
-E.M.nvm = ncread(m_nc,'North_vel')
+E.M.z = ncread(m_nc,'bin_height');
+E.M.mtime = ncread(m_nc,'datetime');
+E.M.evm = ncread(m_nc,'East_vel');
+E.M.nvm = ncread(m_nc,'North_vel');
 E.M.evm(find(E.M.evm == 999)) = NaN;
 E.M.nvm(find(E.M.nvm == 999)) = NaN;
 
@@ -42,6 +42,15 @@ I.M.nvm = ncread(m_nc,'North_vel');
 I.M.temp = ncread(m_nc,'Temperature');
 I.M.evm(find(I.M.evm == 999)) = NaN;
 I.M.nvm(find(I.M.nvm == 999)) = NaN;
+
+m_nc = [adcp_nc_dir 'ISLE_station_H_velocity_wd16_23-Feb-2017.nc'];
+H.zz = ncread(m_nc,'bin_height');
+H.ttime = ncread(m_nc,'datetime')+datenum(1970,1,1);
+H.uu = ncread(m_nc,'East_vel');
+H.vv = ncread(m_nc,'North_vel');
+H.temp = ncread(m_nc,'Temperature');
+H.uu(find(H.uu == 999)) = NaN;
+H.vv(find(H.vv == 999)) = NaN;
 
 distance = ncread(dts_nc,'distance');
 datetime = ncread(dts_nc,'datetime');
