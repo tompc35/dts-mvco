@@ -4,6 +4,7 @@ microcat_dir = [data_dir 'ISLE_mat/microcats/'];
 seagauge_dir = [data_dir 'ISLE_mat/seagauge/'];
 wtpro_dir = [data_dir 'DTS_MVCO_cal/WaterTempPro/'];
 adcp_dir = [data_dir 'ISLE_mat/ADCP/'];
+adcp_nc_dir = [data_dir 'archive_Isle_mooring/'];
 dts_dir = [data_dir 'DTS_MVCO_nc/'];
 quadpod_dir = [data_dir 'ISLE_mat/quadpod/'];
 

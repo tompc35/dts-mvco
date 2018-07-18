@@ -4,7 +4,7 @@ load_dts_isle_data
 detide_h;
 m2_freq = freq(5);
 
-m2_cycle = m2_amp(end)*exp(i*2*pi*(m2_freq(end)*24*datetime-m2_pha(end)));
+m2_cycle = m2_amp(2)*exp(i*2*pi*(m2_freq(end)*24*datetime-m2_pha(2)));
 phase = angle(-i*m2_cycle);
 
 % interpolate seagauge temp at C to DTS time base
@@ -23,7 +23,7 @@ tI = [tIm,tIv];
 zsI_isle = [zsI_isle, 20.63];
 
 %%
-Huint = interp1(H.ttime,H.uu(end,:),datetime);
+Huint = interp1(H.ttime,H.uu(2,:),datetime);
 Cuint = interp1(C.M.mtime,C.M.evm(12,:),datetime);
 
 nfilt = 3;

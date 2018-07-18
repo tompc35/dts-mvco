@@ -156,13 +156,13 @@ fipr = find(isfinite(prsg(:,3)));
 prstd = nan(size(prsg(:,3)));
 prstd(fipr) = movingstd(prsg(fipr,3),navg);
 
-ficm = find(isfinite(C.M.evm(3,:)));
-ucstd = nan(size(C.M.evm(3,:)));
-ucstd(ficm) = movingstd(C.M.evm(3,ficm),navg);
+ficm = find(isfinite(C.M.evm(1,:)));
+ucstd = nan(size(C.M.evm(1,:)));
+ucstd(ficm) = movingstd(C.M.evm(1,ficm),navg);
 
-ficmt = find(isfinite(C.utide(3,:)));
-uctstd = nan(size(C.utide(3,:)));
-uctstd(ficmt) = movingstd(C.utide(3,ficmt),navg);
+ficmt = find(isfinite(C.utide(1,:)));
+uctstd = nan(size(C.utide(1,:)));
+uctstd(ficmt) = movingstd(C.utide(1,ficmt),navg);
 
 ficmh = find(isfinite(H.uu(2,:)));
 uhstd = nan(size(H.uu(2,:)));
@@ -307,10 +307,10 @@ plot(datetime,dTdtc,'r-')
 yl = ylim;
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
-ylabel('\partialT/\partialt [^oC/hr]')
+ylabel('\it\fontname{Times}\partialT/\partialt \rm\fontname{Helvetica}[^oC/hr]')
 leg = legend('H','C','location','southeast');
 set(leg,'box','off')
-title('time derivative of bottom temperature, \partialT/\partialt')
+title('\rm time derivative of bottom temperature, \it\fontname{Times}\partialT/\partialt')
 set(gca,'xticklabel',[])
 ylim([-4 2])
 xl = xlim;
@@ -325,8 +325,8 @@ hold off
 ylim([0,0.5])
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
-ylabel(['std(\partialT/\partialt) [^oC/hr]'])
-title('2-day running standard deviation of \partialT/\partialt')
+ylabel(['std(\it\fontname{Times}\partialT/\partialt\rm\fontname{Helvetica}) [^oC/hr]'])
+title('\rm 2-day running standard deviation of \it\fontname{Times}\partialT/\partialt')
 set(gca,'xticklabel',[])
 leg = legend('H','C','location','northeast');
 set(leg,'box','off')
@@ -342,8 +342,8 @@ xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
 ylim([0,0.25])
 set(gca,'xticklabel',[])
-title('2-day running mean of vertical temperature stratification, \partialT/\partialz')
-ylabel('\partialT/\partialz [^oC/m]')
+title('\rm 2-day running mean of vertical temperature stratification, \it\fontname{Times}\partialT/\partialz')
+ylabel('\it\fontname{Times}\partialT/\partialz\rm\fontname{Helvetica} [^oC/m]')
 leg = legend('H','C','location','northeast');
 set(leg,'box','off')
 xl = xlim;
@@ -356,11 +356,11 @@ hold on
 plot(C.M.mtime,uctstd,'r--')
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
-title('2-day running standard deviation of eastward velocity (site C)')
-ylabel('std(u) [m/s]')
-leg = legend('full','M2+S2+N2','location','northeast');
+title('\rm 2-day running standard deviation of eastward velocity (site C)')
+ylabel('std(\it\fontname{Times}u\rm\fontname{Helvetica}) [m/s]')
+leg = legend('full','M_2+S_2+N_2','location','northeast');
 set(leg,'box','off');
-ylim([0.08,0.13])
+ylim([0.07,0.11])
 xl = xlim;
 yl = ylim;
 text(xl(1)+0.01*diff(xl),yl(2)-0.08*diff(yl),'d)')
@@ -377,7 +377,7 @@ plot(dTdt_std,distance/1000,'k')
 xl = xlim;
 hold on
 plot(xl,[distance(zic)/1000,distance(zic)/1000],'k--','linewidth',2)
-xlabel('std(\partialT/\partialt) [^oC/hr]')
+xlabel('std(\it\fontname{Times}\partialT/\partialt\rm\fontname{Helvetica}) [^oC/hr]')
 ylabel('distance, d [km]')
 xlim(xl);
 yl = ylim;

@@ -2,15 +2,6 @@ clear all
 
 load_dts_isle_data
 
-em_dir = '/Users/tomconnolly/work/Data/ISLE/archive_Isle_mooring/'
-em_nc = [em_dir 'ISLE_station_E_velocity_wd15_23-Feb-2017.nc'];
-E.M.z = ncread(em_nc,'bin_height')
-E.M.mtime = ncread(em_nc,'datetime')
-E.M.evm = ncread(em_nc,'East_vel')
-E.M.nvm = ncread(em_nc,'North_vel')
-E.M.evm(find(E.M.evm == 999)) = NaN;
-E.M.nvm(find(E.M.nvm == 999)) = NaN;
-
 %%
 
 nfilt = 3;
