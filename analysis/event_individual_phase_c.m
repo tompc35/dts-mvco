@@ -530,16 +530,54 @@ gi = isfinite(cpamag+rhodiff);
 [ray,pay] = corrcoef(cpay(gi),c0(gi));
 may = polyfit(c0(gi),cpay(gi),1);
 
+
 figure()
-set(gcf,'papersize',[8,3])
-set(gcf,'paperposition',[-0.5 -2.6 9 5.5])
+set(gcf,'papersize',[6,3])
+set(gcf,'paperposition',[-0.2 -2.6 6.5 5.5])
+
 
 lw = 2; % line width
 lc = [0.5 0.5 0.5]; % line color
 tc = lc; % text color
 
-subplot(231)
-scatter(c0,cpmag,30,cwave,'filled','k')
+subplot(221)
+scatter(c0,cpy,30,cwave,'filled','k')
+hold on 
+plot(c0,c0*my(1)+my(2),'color',lc,'linewidth',lw)
+box on
+xlabel('gravity current c_{gc} [m/s]')
+ylabel('observed c_p^y [m/s]')
+title({'phase speed','onshore component'})
+xl = xlim;
+yl = ylim;
+text(0.35*diff(xl),yl(2)+0.06*diff(yl),'a)')
+text(0.95*diff(xl),yl(1)+0.33*diff(yl),['m = ', num2str(my(1),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.25*diff(yl),['b = ', num2str(my(2),1)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.14*diff(yl),['r = ', num2str(ry(2),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.06*diff(yl),['p = ', num2str(py(2),1)],'color',tc)
+
+subplot(222)
+scatter(c0,cpay,30,cwave,'filled','k')
+hold on 
+plot(c0,c0*may(1)+may(2),'color',lc,'linewidth',lw)
+xlabel('gravity current c_{gc} [m/s]')
+ylabel('observed c''_p^{ y} [m/s]')
+title({'adjusted phase speed','onshore component'})
+box on
+xl = xlim;
+yl = ylim;
+text(0.36*diff(xl),yl(2)-0.07*diff(yl),'b)')
+text(0.95*diff(xl),yl(1)+0.23*diff(yl),['m = ', num2str(may(1),2)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.16*diff(yl),['b = ', num2str(may(2),1)],'color',tc)
+text(0.95*diff(xl),yl(1)+0.05*diff(yl),['r = ', num2str(ray(2),2)],'color',tc)
+text(0.95*diff(xl),yl(1)-0.02*diff(yl),['p = ', num2str(pay(2),1)],'color',tc)
+
+print('-dpdf','../figures/fig_cp_compare')
+
+%%
+figure
+subplot(221)
+scatter(c0,cpamag2,30,cwave,'filled','k')
 hold on
 plot(c0,c0*m(1)+m(2),'color',lc,'linewidth',lw)
 box on
@@ -553,37 +591,3 @@ text(0.95*diff(xl),0.13*diff(yl),['m = ', num2str(m(1),3)],'color',tc)
 text(0.95*diff(xl),0.06*diff(yl),['b = ', num2str(m(2),1)],'color',tc)
 text(0.95*diff(xl),-0.05*diff(yl),['r = ', num2str(r(2),2)],'color',tc)
 text(0.95*diff(xl),-0.12*diff(yl),['p = ', num2str(p(2),1)],'color',tc)
-
-subplot(232)
-scatter(c0,cpy,30,cwave,'filled','k')
-hold on 
-plot(c0,c0*my(1)+my(2),'color',lc,'linewidth',lw)
-box on
-xlabel('gravity current c_{gc} [m/s]')
-ylabel('observed c_y [m/s]')
-title({'phase speed','onshore component'})
-xl = xlim;
-yl = ylim;
-text(0.35*diff(xl),yl(2)+0.06*diff(yl),'b)')
-text(0.95*diff(xl),yl(1)+0.33*diff(yl),['m = ', num2str(my(1),2)],'color',tc)
-text(0.95*diff(xl),yl(1)+0.25*diff(yl),['b = ', num2str(my(2),1)],'color',tc)
-text(0.95*diff(xl),yl(1)+0.14*diff(yl),['r = ', num2str(ry(2),2)],'color',tc)
-text(0.95*diff(xl),yl(1)+0.06*diff(yl),['p = ', num2str(py(2),1)],'color',tc)
-
-subplot(233)
-scatter(c0,cpay,30,cwave,'filled','k')
-hold on 
-plot(c0,c0*may(1)+may(2),'color',lc,'linewidth',lw)
-xlabel('gravity current c_{gc} [m/s]')
-ylabel('observed c''_y [m/s]')
-title({'adjusted phase speed','onshore component'})
-box on
-xl = xlim;
-yl = ylim;
-text(0.36*diff(xl),yl(2)-0.07*diff(yl),'c)')
-text(0.95*diff(xl),yl(1)+0.23*diff(yl),['m = ', num2str(may(1),2)],'color',tc)
-text(0.95*diff(xl),yl(1)+0.16*diff(yl),['b = ', num2str(may(2),1)],'color',tc)
-text(0.95*diff(xl),yl(1)+0.05*diff(yl),['r = ', num2str(ray(2),2)],'color',tc)
-text(0.95*diff(xl),yl(1)-0.02*diff(yl),['p = ', num2str(pay(2),1)],'color',tc)
-
-print('-dpdf','../figures/fig_cp_compare')

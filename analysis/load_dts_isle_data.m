@@ -8,8 +8,6 @@ mdaysg = jd2matday(jdsg');
 
 Equad = load(quadpod_e_mat);
 
-%H = load(adcp_h_mat);
-
 m_nc = [adcp_nc_dir 'ISLE_station_C_velocity_wd14_23-Feb-2017.nc'];
 C.M.z = ncread(m_nc,'bin_height');
 C.M.mtime = ncread(m_nc,'datetime')+datenum(1970,1,1);
