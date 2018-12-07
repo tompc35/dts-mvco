@@ -312,7 +312,6 @@ hold off
 title('I - northward velocity')
 caxis([-0.1,0.1])
 xlabel('time relative to event start [h]')
-%ylabel('[mab]')
 set(gca,'xtick',[-6:3:6]);
 xl = double(xlim);
 yl = double(ylim);

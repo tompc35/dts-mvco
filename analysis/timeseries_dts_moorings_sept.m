@@ -100,6 +100,16 @@ posnew(2) = posnew(2) - 0.15;
 set(s2, 'Position', posnew)
 set(gca,'color','none')
 
+ta1 = datenum('2-Sep-2014 10:30');
+ta2 = datenum('3-Sep-2014 01:30');
+dt = 1/24/60;
+tt = ta1:dt:ta2;
+uc = C.M.evm(3,:); 
+uh = H.uu(3,:); 
+uth = interp1(H.ttime,-uh,tt);
+utc = interp1(C.M.mtime,-uc,tt);
+utavg = 0.5*(interp1(H.ttime,-uh,tt) + interp1(C.M.mtime,-uc,tt));
+
 s1 = subplot(411)
 pcolor(datetime(ti),distance/1000,tempC(:,ti)), shading flat
 xlim([t1 t2])
@@ -108,6 +118,10 @@ set(gca,'tickdir','out')
 cbar = colorbar('east');
 cpos = get(cbar,'position');
 hold on
+plot(tt,cumtrapz(utc*86400*dt)/1000+distance(1)/1000,'--','color','k','linewidth',2)
+text(tt(end),1.82,'C velocity','color','k')
+plot(tt(1:450),cumtrapz(uth(1:450)*86400*dt)/1000+distance(1)/1000,'-','color','k','linewidth',2)
+text(tt(450),0.23,'H velocity','color','k')
 plot([t1 t2],[distance(zic)/1000 distance(zic)/1000],'k--')
 hold on
 yld = ylim;
@@ -125,11 +139,9 @@ set(s1, 'position', [p(1), p(2)-offset, p(3), p(4)+offset]);
 
 ax = gca;
 ax.Clipping = 'off';
-ta1 = datenum('2-Sep-2014 10:30');
 plot([ta1 ta1],[-0.5 -0.2],'k')
 plot(ta1,-0.2,'k^','markerfacecolor','k','markersize',4)
 
-ta2 = datenum('3-Sep-2014 01:30');
 plot([ta2 ta2],[3.7 4.0],'k')
 plot(ta2,4.0,'k^','markerfacecolor','k','markersize',4)
 

@@ -8,8 +8,6 @@ mdaysg = jd2matday(jdsg');
 
 Equad = load(quadpod_e_mat);
 
-%H = load(adcp_h_mat);
-
 m_nc = [adcp_nc_dir 'ISLE_station_C_velocity_wd14_23-Feb-2017.nc'];
 C.M.z = ncread(m_nc,'bin_height');
 C.M.mtime = ncread(m_nc,'datetime')+datenum(1970,1,1);
@@ -42,6 +40,7 @@ I.M.nvm = ncread(m_nc,'North_vel');
 I.M.temp = ncread(m_nc,'Temperature');
 I.M.evm(find(I.M.evm == 999)) = NaN;
 I.M.nvm(find(I.M.nvm == 999)) = NaN;
+I.M.temp(find(I.M.temp== 999)) = NaN;
 
 m_nc = [adcp_nc_dir 'ISLE_station_H_velocity_wd16_23-Feb-2017.nc'];
 H.zz = ncread(m_nc,'bin_height');
