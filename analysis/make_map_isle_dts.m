@@ -153,7 +153,7 @@ m_text(lon5-0.1/60,lat5-0.4/60,'R5','color','b','fontsize',8)
 m_text(lon6+0.2/60,lat6+0.2/60,'R6','color','b','fontsize',8)
 
 m_plot(lon_dts,lat_dts,'r-','linewidth',2)
-m_text(-70.4750,41.2917,{'Wasque','Shoals'},'color','k','fontsize',8,...
+m_text(-70.4750,41.2917,{'Wasque','Shoal'},'color','k','fontsize',8,...
                 'horizontalalignment','center')
             
 scale_lat = 41+15.5/60;

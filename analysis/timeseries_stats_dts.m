@@ -1,6 +1,6 @@
 clear all
 
-do_corr = 1;
+do_corr = 0;
 
 load_dts_isle_data
 detide_c_components
@@ -364,6 +364,7 @@ ylim([0.07,0.11])
 xl = xlim;
 yl = ylim;
 text(xl(1)+0.01*diff(xl),yl(2)-0.08*diff(yl),'d)')
+set(gcf,'renderer','painters')
 
 print -dpdf ../figures/fig_tseries_dTdt_strat_u
 

@@ -22,17 +22,21 @@ tIv = interp1(I.M.mtime,I.M.temp',datetime);
 tI = [tIm,tIv];
 zsI_isle = [zsI_isle, 20.63];
 
+% combine temperature mooring and cal temp at site H
+tHm = interp1(mday_isle,wtH_isle,datetime);
+tH = [tHm,tcal3];
+zsH_isle = [zsI_isle, 16];
+
 %%
 Huint = interp1(H.ttime,H.uu(2,:),datetime);
 Cuint = interp1(C.M.mtime,C.M.evm(12,:),datetime);
 
 nfilt = 3;
 thresh = -0.25;
-[eventih,event_daten] = get_event_indices_dTdt(boxfilt(tcal3,nfilt),datetime,thresh);
+[eventih,event_daten] = get_event_indices_dTdt(boxfilt(tH(:,end),nfilt),datetime,thresh);
 [eventic,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,thresh);
-[eventii,event_daten] = get_event_indices_dTdt(boxfilt(tI(:,end),nfilt),datetime,thresh);
+[eventii,event_daten] = get_event_indices_dTdt(boxfilt(tI(:,end-3),nfilt),datetime,thresh);
 [eventie,event_daten] = get_event_indices_dTdt(boxfilt(te(:,end),nfilt),datetime,thresh);
-
 
 %%
 close all
@@ -65,7 +69,7 @@ set(hh,'Linestyle','-','Color','r','linewidth',3)
 hc = rose(phase(eventic),12);
 set(hc,'Linestyle','-','Color','b','linewidth',3)
 hold off
-leg = legend([hh,hc],'site H (east)','site C (west)')
+leg = legend([hh,hc],'site H (bottom)','site C (bottom)')
 pos = get(leg,'Position')
 set(leg,'fontsize',12,'Position',[pos(1)+0.1 pos(2)+0.066 pos(3) pos(4)])
 text(11,3,'eastward','fontsize',14)
@@ -78,23 +82,19 @@ hold on
 hc = rose(phase(eventii),12);
 set(hc,'Linestyle','-','Color','b','linewidth',3)
 hold off
-leg = legend('site E (far east)','site I (offshore)')
+leg = legend('site E (bottom)','site I (13 mab)')
 pos = get(leg,'Position')
 set(leg,'fontsize',12,'Position',[pos(1)+0.1 pos(2)+0.066 pos(3) pos(4)])
 print('-dpng','../figures/fig_event_polar_histogram')
 
 
-%%
+%% Analyze high pass filtered data
 datei = find(datetime >= datenum('13 July 2014') & datetime < datenum('5 September 2014'));
 
-figure
-plot(datetime(datei),tsgc(datei,end)-pl64tc(tsgc(datei,end))), datetick('x')
-title('high pass filtered bottom temp - C')
+dTdte = 0.5*(te(datei(3):datei(end),end)-te(datei(1):datei(end-2),end))/(600);
+dTdth = 0.5*(tcal3(datei(3):datei(end),end)-tcal3(datei(1):datei(end-2),end))/(600);
 
 nanstd(te(datei,end)-pl64tc(te(datei,end)))
 nanstd(tcal3(datei,end)-pl64tc(tcal3(datei,end)))
 nanstd(tsgc(datei,end)-pl64tc(tsgc(datei,end)))
 nanstd(tI(datei,end)-pl64tc(tI(datei,end)))
-
-dTdte = 0.5*(te(datei(3):datei(end),end)-te(datei(1):datei(end-2),end))/(600);
-dTdth = 0.5*(tcal3(datei(3):datei(end),end)-tcal3(datei(1):datei(end-2),end))/(600);

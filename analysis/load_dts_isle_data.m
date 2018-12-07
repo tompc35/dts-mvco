@@ -40,6 +40,7 @@ I.M.nvm = ncread(m_nc,'North_vel');
 I.M.temp = ncread(m_nc,'Temperature');
 I.M.evm(find(I.M.evm == 999)) = NaN;
 I.M.nvm(find(I.M.nvm == 999)) = NaN;
+I.M.temp(find(I.M.temp== 999)) = NaN;
 
 m_nc = [adcp_nc_dir 'ISLE_station_H_velocity_wd16_23-Feb-2017.nc'];
 H.zz = ncread(m_nc,'bin_height');
