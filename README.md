@@ -2,6 +2,8 @@
 
 MATLAB code for processing, calibrating, evaluating and analyzing data from distributed temperature sensing (DTS) system deployed during the Inner Shelf Lateral Exchange (ISLE) project south of Martha's Vineyard in 2014.
 
+<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/80x15.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
+
 ##### Reference
 
 * Connolly, T. P. and A. R. Kirincich (2019) High-resolution observations of subsurface fronts and alongshore bottom temperature variability over the inner shelf, Journal of Geophysical Research. doi:[10.1029/2018jc014454](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2018JC014454)
