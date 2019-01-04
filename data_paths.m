@@ -14,11 +14,6 @@ cal_nc = [dts_dir 'DTSasit_cal.nc'];
 microcat_mat = [microcat_dir 'microcats.mat'];
 seagauge_mat = [seagauge_dir 'seagauge.mat'];
 
-adcp_c_mat = [adcp_dir 'ISLE_C__burstmeans_06-Mar-2015.mat'];
-adcp_g_mat = [adcp_dir 'ISLE_G__burstmeans_06-Mar-2015.mat'];
-adcp_h_mat = [adcp_dir 'ISLE_H_corrected_11252015.mat'];
-adcp_i_mat = [adcp_dir 'ISLE_I_burstmeans_06-Mar-2015.mat'];
-
 cal_dir = [data_dir 'DTS_MVCO_cal/'];
 wtcalfile = [cal_dir 'WaterTempPro/temppro_cals.mat'];
 
