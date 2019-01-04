@@ -9,10 +9,10 @@ MATLAB code for processing, calibrating, evaluating and analyzing data from dist
 * Connolly, T. P. and A. R. Kirincich (2019) High-resolution observations of subsurface fronts and alongshore bottom temperature variability over the inner shelf, Journal of Geophysical Research. doi:[10.1029/2018jc014454](https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2018JC014454)
 
 ### Running the code
-* *Optional* - Edit [data_paths.m](data_paths.m) so that `data_dir` variable points to the right location on your machine. This step is not necessary if the data and code directories are located in the same overarching directory:
+* *Optional* - Edit [data_paths.m](data_paths.m) so that `data_dir` variable points to the right location on your machine. This step is not necessary if the data and code directories are located in the same overarching project directory:
 
 ```
-data_dir/
+project_directory/
   DTS-MVCO/
     analysis/
     processing/
