@@ -1,3 +1,6 @@
+% script get_highres_bathy.m
+% --------------------------
+% Download high-resolution bathymetry from NGDC 
 
 disp('downloading MVCO bathy subset from NGDC OpenDAP server...')
 

@@ -1,3 +1,8 @@
+% script load_dts_isle_data.m
+% ---------------------------
+% Loads all ISLE data for analysis
+
+% The script data_paths.m in top-level directory contains paths to data files.
 run ../data_paths
 
 load(microcat_mat)

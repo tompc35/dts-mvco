@@ -1,6 +1,9 @@
 % script calibrate_dts_linearsolve_towercal_threepoints.m
 % -------------------------------------------------------
-% DTS calibration using full (time-averaged) data set
+% DTS calibration using full (time-averaged) data set.
+%
+% Uses three calibration sections, and creates figure showing error
+% evaluation.
 
 clear all
 run ../data_paths
@@ -202,7 +205,7 @@ text(xl(1)+diff(xl)*.02,yl(2)-diff(yl)*.07,'c)','fontsize',12)
 
 
 
-set(gcf, 'PaperSize', [7 5.5]); %Keep the paper size [width height] 
-set(gcf, 'PaperPosition', [0 0 7 5.5]); %
+set(gcf, 'PaperSize', [6.7 5.25]); %Keep the paper size [width height] 
+set(gcf, 'PaperPosition', [-0.3 0 7.5 5.27]); %
 
 print -dpdf ../figures/fig_DTS_error_summary

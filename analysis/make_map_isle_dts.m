@@ -1,12 +1,6 @@
-%make_map_isle.m
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%make_map_isle.m
-%
-%  %ISLE 2014 final locations of deployed moorings and DTS cables
-%
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% script make_map_isle.m
+% ----------------------
+% Create map showing deployment locations of instruments
 
 clear all
 run ../data_paths

@@ -1,3 +1,7 @@
+% script timeseries_dts_moorings_july.m
+% -------------------------------------
+% Plot time series of DTS and mooring temperatures - 4.5 day subset in July
+
 clear all
 
 load_dts_isle_data; 
@@ -56,10 +60,8 @@ plot([ta1 ta1],[16.8 17.4],'k')
 plot(ta1,17.4,'k^','markerfacecolor','k','markersize',4)
 hold off
 datetick('x','keeplimits')
-%title('H mooring temperature')
 ylabel('[deg C]')
 ylim(yl)
-%grid on
 xl = xlim;
 text(xl(1)+0.01*diff(xl),yl(2)-0.07*diff(yl),'    Site H')
 box off
@@ -145,4 +147,4 @@ plot(ta1,-0.2,'k^','markerfacecolor','k','markersize',4)
 plot([ta2 ta2],[3.7 4.0],'k')
 plot(ta2,4.0,'k^','markerfacecolor','k','markersize',4)
 
-print -dpng -r600 ../figures/fig_tseries_dts_isle
+print -djpeg -r600 ../figures/fig_tseries_dts_isle.jpg

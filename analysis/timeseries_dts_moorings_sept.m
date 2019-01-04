@@ -1,3 +1,8 @@
+% script timeseries_dts_moorings_sept.m
+% -------------------------------------
+% Plot time series of DTS and mooring temperatures - 4.5 day subset in
+% September
+
 clear all
 
 load_dts_isle_data; 
@@ -145,4 +150,4 @@ plot(ta1,-0.2,'k^','markerfacecolor','k','markersize',4)
 plot([ta2 ta2],[3.7 4.0],'k')
 plot(ta2,4.0,'k^','markerfacecolor','k','markersize',4)
 
-print -dpng -r600 ../figures/fig_tseries_dts_isle_sept
+print -djpeg -r600 ../figures/fig_tseries_dts_isle_sept.jpg

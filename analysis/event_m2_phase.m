@@ -1,5 +1,9 @@
-clear all
+% script event_m2_phase.m
+% -----------------------
+% Analyze phase of cooling events relative to M2 tide. Creates polar
+% histogram.
 
+clear all
 load_dts_isle_data
 detide_h;
 m2_freq = freq(5);
@@ -85,7 +89,7 @@ hold off
 leg = legend('site E (bottom)','site I (13 mab)')
 pos = get(leg,'Position')
 set(leg,'fontsize',12,'Position',[pos(1)+0.1 pos(2)+0.066 pos(3) pos(4)])
-print('-dpng','../figures/fig_event_polar_histogram')
+print('-dpdf','../figures/fig_event_polar_histogram')
 
 
 %% Analyze high pass filtered data

@@ -1,6 +1,18 @@
 function [eventi,event_daten] = get_event_indices_dTdt(T,daten,thresh)
 
-% find all times when temperature time derivative is below a critical threshold
+% Find all times when temperature time derivative is below a critical
+% threshold. Only first event is counted if events separated by less than
+% six hours.
+%
+% INPUTS:
+% T - temperature time series [deg C]
+% daten - Matlab date number
+% thresh - threshold of dT/dt [deg C/hour]
+%
+% OUTPUT:
+% eventi - indices of events in arrays T, daten
+% event_daten - dates of events
+
 
 dt = (daten(2)-daten(1))*24;
 dTdt = NaN*T;

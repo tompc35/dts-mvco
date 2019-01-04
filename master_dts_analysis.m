@@ -8,13 +8,13 @@ end
 
 cd analysis
 
-make_map_isle_dts
-evaluate_dts_calibration
-timeseries_dts_dTdx_deployment
-timeseries_dts_moorings_july
-timeseries_dts_moorings_sept
-event_m2_phase
-event_composite_h
-event_individual_phase_c
+make_map_isle_dts             % Figure 1
+timeseries_stats_dts          % Figures 2 and 6
+evaluate_dts_calibration      % Figure 3
+timeseries_dts_moorings_july  % Figure 4
+timeseries_dts_moorings_sept  % Figure 5
+event_m2_phase                % Figure 7
+event_composite_h             % Figure 8
+event_individual_phase_c      % Figures 9,10,11
 
 cd ..

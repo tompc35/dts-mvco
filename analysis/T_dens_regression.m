@@ -1,3 +1,7 @@
+% script T_dens_regression
+% ------------------------
+% Compute linear regression between temperature and density at site C.
+
 load_dts_isle_data
 dens0C_isle = sw_dens0(saltC_isle,wtC_isle);
 

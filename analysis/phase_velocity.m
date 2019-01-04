@@ -2,6 +2,21 @@ function [cp,phixy,ia,ib,ic] = phase_velocity(lona,lata,Ta,lonb,latb,Tb,lonc,lat
 
 % Compute phase velocity following Lee (1961), based on time of minimum
 % dT/dt (i.e., most rapid cooling).
+%
+% Computes phase velocity of one event based on longitude,latitude and 
+% temperature at three sites. The event arrival time at each site corresponds
+% to the minimum in dT/dt.
+%
+% INPUTS:
+% lon* - longitude of site * (a,b,c)
+% lat* - latitude of site * (a,b,c)
+% T* - temperature time series at site * (a,b,c)
+% dt - time interval in temperature time series, in seconds
+%
+% OUTPUTS:
+% cp - phase velocity magnitude (m/s)
+% phixy - propagation direction (positive CCW from east)
+% ia,ib,ic - indices of arrival times
 
 % geometry of array
 xa = 0; ya = 0;

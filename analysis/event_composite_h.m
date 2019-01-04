@@ -1,5 +1,8 @@
-clear all
+% script event_composite_h.m
+% --------------------------
+% Analyze composite averages of velocity and temperature associated with cooling events at site H.
 
+clear all
 load_dts_isle_data
 
 %%
@@ -152,6 +155,8 @@ u_stderrmax_e = max(u_std_e/(length(isfinite(we_events(1,1,:))))) % divide by nu
 v_std_e = squeeze(nanstd(imag(we_events(:,1,:)),[],3))';
 v_stderrmax_e = max(v_std_e/(length(isfinite(we_events(1,1,:))))) % divide by number of events and take maximum
 
+
+%%% Figure %%%
 
 ax = subplot(15,2,[9:2:13])
 pos = get(ax, 'Position');
@@ -327,4 +332,4 @@ u_stderrmax_i = max(u_std_i/(length(isfinite(wi_events(1,1,:))))) % divide by nu
 v_std_i = squeeze(nanstd(imag(wi_events(:,1,:)),[],3))';
 v_stderrmax_i = max(v_std_i/(length(isfinite(wi_events(1,1,:))))) % divide by number of events and take maximum
 
-print -dpng ../figures/fig_h_event_composite_allsites.png
+print -r600 -djpeg ../figures/fig_h_event_composite_allsites.jpg

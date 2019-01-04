@@ -1,9 +1,20 @@
+% script timeseries_stats_dts.m
+% -----------------------------
+% Analyze decriptive statistics during 1) mooring deployment and 2)along DTS cable.
+
 clear all
 
-do_corr = 0;
+% Compute cross-correlations (0 - no, 1 - yes)?
+do_corr = 0; 
 
 load_dts_isle_data
 detide_c_components
+
+% combine temperature mooring and quadpod at site E
+tem = interp1(mday_isle,wtE_isle,datetime);
+teq = fliplr(interp1(Equad.mtime,Equad.aT,datetime));
+te = [tem, teq];
+zsE_isle = [zsE_isle, 15-fliplr(Equad.mab)];
 
 [x3,y3] = latlon2xy(lat3,lon3,lat3,lon3);
 [x4,y4] = latlon2xy(lat4,lon4,lat3,lon3);
@@ -48,6 +59,11 @@ dTdx(2:end-1,:) = 0.5*(tempCf(3:end,:)-tempCf(1:end-2,:))/dx;
 dTdt(:,2:end-1) = 0.5*(tempCf(:,3:end)-tempCf(:,1:end-2))/dt;
 
 %% dT/dt at moorings
+tef = nan(size(te(:,end)));
+tef(2:end-1) = boxfilt(te(:,end),nfilt);
+dTdte = nan(size(tef));
+dTdte(2:end-1) = (tef(3:end)-tef(1:end-2))/(2*dt);
+
 tcf = nan(size(tsgc));
 tcf(2:end-1) = boxfilt(tsgc,nfilt);
 dTdtc = nan(size(tcf));
@@ -160,6 +176,10 @@ ficm = find(isfinite(C.M.evm(1,:)));
 ucstd = nan(size(C.M.evm(1,:)));
 ucstd(ficm) = movingstd(C.M.evm(1,ficm),navg);
 
+fiem = find(isfinite(E.M.evm(2,:)));
+uestd = nan(size(E.M.evm(2,:)));
+uestd(fiem) = movingstd(E.M.evm(2,fiem),navg);
+
 ficmt = find(isfinite(C.utide(1,:)));
 uctstd = nan(size(C.utide(1,:)));
 uctstd(ficmt) = movingstd(C.utide(1,ficmt),navg);
@@ -171,6 +191,10 @@ uhstd(ficmh) = movingstd(H.uu(2,ficmh),navg);
 fic = find(isfinite(dTdtc));
 dTdtc_runstd = nan(size(dTdtc));
 dTdtc_runstd(fic) = movingstd(dTdtc(fic),navg);
+
+fie = find(isfinite(dTdte));
+dTdte_runstd = nan(size(dTdte));
+dTdte_runstd(fie) = movingstd(dTdte(fie),navg);
 
 fi3 = find(isfinite(dTdt3));
 dTdt3_runstd = nan(size(dTdt3));
@@ -196,30 +220,60 @@ stratC_boxfilt(navg/2:end-navg/2) = boxfilt(stratC_interp,navg);
 % temperature - full water column
 wtC_bot = interp1(mdaysg,wtsg(:,3),mday_isle);
 wtH_bot = interp1(datetime,tcal3,mday_isle);
+wtE_bot = interp1(Equad.mtime,Equad.aT(:,1),mday_isle);
 
 stratC_temp = -(wtC_isle(:,1)-wtC_bot(:,end))/(zsC_isle(1)-15);
 stratH_temp = -(wtH_isle(:,1)-wtH_bot(:,end))/(zsH_isle(1)-16);
+stratE_temp = -(wtE_isle(:,1)-wtE_bot(:,end))/(zsE_isle(1)-16);
 
 stratC_temp_interp = interp1(mday_isle,stratC_temp,datetime);
 stratH_temp_interp = interp1(mday_isle,stratH_temp,datetime);
+stratE_temp_interp = interp1(mday_isle,stratE_temp,datetime);
 
 stratH_temp_filt = pl64tc(stratH_temp_interp,6*33);
 stratC_temp_filt = pl64tc(stratC_temp_interp,6*33);
+stratE_temp_filt = pl64tc(stratE_temp_interp,6*33);
 
 stratH_temp_boxfilt = nan(size(stratH_temp_interp));
 stratC_temp_boxfilt = nan(size(stratH_temp_interp));
+stratE_temp_boxfilt = nan(size(stratE_temp_interp));
 stratH_temp_boxfilt(144:end-144) = boxfilt(stratH_temp_interp,6*24*2);
 stratC_temp_boxfilt(144:end-144) = boxfilt(stratC_temp_interp,6*24*2);
+stratE_temp_boxfilt(144:end-144) = boxfilt(stratE_temp_interp,6*24*2);
 
 gfi = find(isfinite(stratH_temp_boxfilt(ti)+dTdt3_runstd(ti)));
 
-% correlation
+% correlation at H
 rmat = corrcoef(stratH_temp_boxfilt(ti),dTdt3_runstd(ti));
 [rhoxy,alln,dof,rhoxx,rhoyy,rhoyx,inti] = xcov_dof(stratH_temp_boxfilt(ti),dTdt3_runstd(ti));
 ro = rmat(2);
 p = rsig(ro,dof);
 
-disp('correlation - std(dT/dt) vs. dT/dz')
+disp('correlation - std(dT/dt) vs. dT/dz at H')
+disp('----------------------------------')
+disp(['r = ' num2str(ro)])
+disp(['dof = ' num2str(dof)])
+disp(['p = ' num2str(p)])
+
+% correlation at E
+rmat = corrcoef(stratE_temp_boxfilt(ti),dTdte_runstd(ti));
+[rhoxy,alln,dof,rhoxx,rhoyy,rhoyx,inti] = xcov_dof(stratE_temp_boxfilt(ti),dTdte_runstd(ti));
+ro = rmat(2);
+p = rsig(ro,dof);
+
+disp('correlation - std(dT/dt) vs. dT/dz at E')
+disp('----------------------------------')
+disp(['r = ' num2str(ro)])
+disp(['dof = ' num2str(dof)])
+disp(['p = ' num2str(p)])
+
+% correlation between H and E
+rmat = corrcoef(dTdt3_runstd(ti),dTdte_runstd(ti));
+[rhoxy,alln,dof,rhoxx,rhoyy,rhoyx,inti] = xcov_dof(dTdt3_runstd(ti),dTdte_runstd(ti));
+ro = rmat(2);
+p = rsig(ro,dof);
+
+disp('correlation - std(dT/dt) at E vs. std(dT/dt) at H')
 disp('----------------------------------')
 disp(['r = ' num2str(ro)])
 disp(['dof = ' num2str(dof)])
@@ -296,6 +350,7 @@ plot(xl,[distance(zic)/1000,distance(zic)/1000],'k--','linewidth',2)
 figure
 plot(stratH_temp_boxfilt(ti(gfi)),dTdt3_runstd(ti(gfi)),'.')
 
+%%
 figure
 set(gcf,'papersize',[6 7])
 set(gcf,'paperposition',[0 -0.4 6 7.6])
@@ -304,6 +359,7 @@ subplot(4,1,1)
 plot(datetime,dTdt3,'b-')
 hold on
 plot(datetime,dTdtc,'r-')
+%plot(datetime,dTdte,'k-')
 yl = ylim;
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
@@ -321,14 +377,15 @@ subplot(4,1,2)
 plot(datetime,dTdt3_runstd,'b-')
 hold on
 plot(datetime,dTdtc_runstd,'r-')
+plot(datetime,dTdte_runstd,'k-')
 hold off
-ylim([0,0.5])
+ylim([0,0.6])
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
 ylabel(['std(\it\fontname{Times}\partialT/\partialt\rm\fontname{Helvetica}) [^oC/hr]'])
 title('\rm 2-day running standard deviation of \it\fontname{Times}\partialT/\partialt')
 set(gca,'xticklabel',[])
-leg = legend('H','C','location','northeast');
+leg = legend('H','C','E','location','northeast');
 set(leg,'box','off')
 xl = xlim;
 yl = ylim;
@@ -338,13 +395,14 @@ subplot(4,1,3)
 plot(datetime,stratH_temp_boxfilt,'b-')
 hold on
 plot(datetime,stratC_temp_boxfilt,'r-')
+plot(datetime,stratE_temp_boxfilt,'k-')
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
 ylim([0,0.25])
 set(gca,'xticklabel',[])
 title('\rm 2-day running mean of vertical temperature stratification, \it\fontname{Times}\partialT/\partialz')
 ylabel('\it\fontname{Times}\partialT/\partialz\rm\fontname{Helvetica} [^oC/m]')
-leg = legend('H','C','location','northeast');
+leg = legend('H','C','E','location','northeast');
 set(leg,'box','off')
 xl = xlim;
 yl = ylim;
@@ -354,6 +412,8 @@ subplot(4,1,4)
 plot(C.M.mtime,ucstd,'r-')
 hold on
 plot(C.M.mtime,uctstd,'r--')
+plot(C.M.mtime,uestd,'k-')
+%plot(H.ttime,uhstd,'b-')
 xlim([t1 t2])
 datetick('x','keeplimits','keepticks')
 title('\rm 2-day running standard deviation of eastward velocity (site C)')

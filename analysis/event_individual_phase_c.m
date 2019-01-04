@@ -1,21 +1,26 @@
-clear all
+% script event_individual_phase_c.m
+% ---------------------------------
+% Analyze events at site C. Creates three figures:
+% - Bottom temperature, DTS data and vertical temperature/velocity
+% structure for three indiviual events
+% - Plots of phase velocity (absolute and relative to mean flow)
+% - Comparisons with gravity current phase speeds
 
+clear all
 plot_event = 1;
 
 load_dts_isle_data
-nfilt = 3;
+nfilt = 3; % length of running average
 
 detide_c;
 
 % interpolate seagauge temp at C to DTS time base
 tsgc = interp1(mdaysg,wtsg(:,3),datetime);
+
+% Find events
 [eventi,event_daten] = get_event_indices_dTdt(boxfilt(tsgc,nfilt),datetime,-0.25);
 
-%%
-
-% 5 - calibration point 5
-% c - corner of DTS cable
-% e - end of DTS cable
+%% Loop through individual events
 
 ti = 1:length(eventi);
 
@@ -86,12 +91,8 @@ for kk = 1:length(ti)
             % mean tidal velocity in direction of phase propagation during
             % passage of event
             cmi = find(C.M.mtime>=tstart & C.M.mtime<=tf);
-            %cmi = max(cmi);
             if ~isempty(cmi)
                 cmih = [(cmi(1)-2):(cmi(1)-1)];
-                %cmih = [(cmi(end)+3):(cmi(end)+4)];
-                %cmih = [(cmi(end)+1):(cmi(end)+2)];
-                %cmih = round(mean(cmi));
             else
                 cmih = cmi;
             end
@@ -100,12 +101,6 @@ for kk = 1:length(ti)
 
             uhm_tide = mean(depthavg(C.M.evm(1:17,cmi),15-(C.M.z(1:17)+zoff),15));
             vhm_tide = mean(depthavg(C.M.nvm(1:17,cmi),15-(C.M.z(1:17)+zoff),15));
-            
-            %uhm_tide = mean(C.M.evm(1,cmi));
-            %vhm_tide = mean(C.M.nvm(1,cmi));
-            
-            %uhm_tide = mean(depthavg(C.utide(1:17,cmih),15-(C.M.z(1:17)+zoff),15),2);
-            %vhm_tide = mean(depthavg(C.vtide(1:17,cmih),15-(C.M.z(1:17)+zoff),15),2);
 
             whm_tide = uhm_tide+i*vhm_tide;
 
@@ -113,7 +108,6 @@ for kk = 1:length(ti)
             uhmc_tide = real(whmc_tide);   
 
             wc = C.M.evm + i*C.M.nvm;
-            %wcc = wc*exp(-i*phixy);
 
             % remove background current
             cpa = cp-mean(uhmc_tide);
@@ -369,7 +363,7 @@ for kk = 1:length(ti)
     end
 end
 
-print('-cmyk','-dpng',['../figures/fig_temp_velocity_c_events'])
+print('-r600','-djpeg',['../figures/fig_temp_velocity_c_events'])
 
 %% Scatter plots of phase velocity
 figure
@@ -432,7 +426,8 @@ end
 
 print('-dpdf','../figures/fig_cp_scatter')
 
-%%
+%% Comparison with theory
+
 t0i = find(mitime_events==0);
 dt0i = find(datetime_events==0);
 zsi = 18; % surface adcp bin
@@ -573,21 +568,3 @@ text(0.95*diff(xl),yl(1)+0.05*diff(yl),['r = ', num2str(ray(2),2)],'color',tc)
 text(0.95*diff(xl),yl(1)-0.02*diff(yl),['p = ', num2str(pay(2),1)],'color',tc)
 
 print('-dpdf','../figures/fig_cp_compare')
-
-%%
-figure
-subplot(221)
-scatter(c0,cpamag2,30,cwave,'filled','k')
-hold on
-plot(c0,c0*m(1)+m(2),'color',lc,'linewidth',lw)
-box on
-xlabel('gravity current c_{gc} [m/s]')
-ylabel('observed c [m/s]')
-title({'phase speed','magnitude'})
-xl = xlim;
-yl = ylim;
-text(0.35*diff(xl),yl(2)-0.07*diff(yl),'a)')
-text(0.95*diff(xl),0.13*diff(yl),['m = ', num2str(m(1),3)],'color',tc)
-text(0.95*diff(xl),0.06*diff(yl),['b = ', num2str(m(2),1)],'color',tc)
-text(0.95*diff(xl),-0.05*diff(yl),['r = ', num2str(r(2),2)],'color',tc)
-text(0.95*diff(xl),-0.12*diff(yl),['p = ', num2str(p(2),1)],'color',tc)
